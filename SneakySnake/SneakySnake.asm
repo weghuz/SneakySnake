@@ -25,18 +25,6 @@ snake:    .BYTE MAX_LENGTH+1
 //... fler interrupts
 .ORG INT_VECTORS_SIZE
 init:
-<<<<<<< HEAD
-     // Sätt stackpekaren till högsta minnesadressen
-     ldi rTemp, HIGH(RAMEND)
-     out SPH, rTemp
-     ldi rTemp, LOW(RAMEND)
-     out SPL, rTemp
-
-	 ldi r17, 0b01010101
-	 out PORTCee, r17
-
-	 jmp init
-=======
 	// Sätt stackpekaren till högsta minnesadressen
 	ldi rTemp, HIGH(RAMEND)
 	ldi	rInitRegs, 0b11001111
@@ -78,4 +66,3 @@ loop:
 	cpi	rRowCountC, 0b00001000
 	brsh initD
 	jmp	plusC
->>>>>>> 0bcdaac6d94a8b129deec1c6c3e88e4dfe212082
