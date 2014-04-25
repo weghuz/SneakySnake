@@ -13,6 +13,7 @@ Obj
 *.exp
 *.ncb
 *.suo
+*.atsuo
 *.user
 *.pdb
 *.sdf
@@ -32,3 +33,4 @@ Obj
 *.atsuo
 SneakySnake/Debug
 /Debug
+SneakySnake/SneakySnake.atsuo
