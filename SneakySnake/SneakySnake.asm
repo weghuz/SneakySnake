@@ -27,3 +27,8 @@ init:
      out SPH, rTemp
      ldi rTemp, LOW(RAMEND)
      out SPL, rTemp
+
+	 ldi r17, 0b01010101
+	 out PORTCee, r17
+
+	 jmp init
