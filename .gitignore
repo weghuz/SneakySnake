@@ -3,7 +3,7 @@ Obj
 /obj
 /Bin
 /bin
-
+SneakySnake/Debug
 
 # Compiled #
 *.obj
@@ -30,4 +30,3 @@ Obj
 # Extra #
 
 *.atsuo
-SneakySnake/Debug
