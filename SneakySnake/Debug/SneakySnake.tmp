@@ -21,9 +21,13 @@
   <FILE>SneakySnake.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <matrix><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>15</LINE></matrix>
-  <snake><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>16</LINE></snake>
-  <init><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>24</LINE></init>
-  <loop><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>34</LINE></loop>
+  <matrix><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>18</LINE></matrix>
+  <snake><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>19</LINE></snake>
+  <init><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>27</LINE></init>
+  <reset><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>39</LINE></reset>
+  <loop><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>52</LINE></loop>
+  <plusD><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>43</LINE></plusD>
+  <initD><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>46</LINE></initD>
+  <plusC><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>50</LINE></plusC>
  </LABELS>
 </ASSEMBLER_INFO>

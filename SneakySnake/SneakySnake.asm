@@ -7,7 +7,10 @@
 
 .DEF rTemp         = r16
 .DEF rDirection    = r23
-.DEF rOne		   = r17
+.DEF rToRegister   = r17
+.DEF rInitRegs	   = r18
+.DEF rRowCountC	   = r19
+.DEF rRowCountD	   = r20
 
 .EQU NUM_COLUMNS   = 8
 .EQU MAX_LENGTH    = 25
@@ -24,16 +27,42 @@ snake:    .BYTE MAX_LENGTH+1
 init:
 	// Sätt stackpekaren till högsta minnesadressen
 	ldi rTemp, HIGH(RAMEND)
-	ldi	r18, 0b11001111
-	out	DDRC, r18
-	ldi	r18, 0b11111111
-	out DDRD, r18
+	ldi	rInitRegs, 0b11001111
+	out	DDRC, rInitRegs
+	ldi	rInitRegs, 0b11111111
+	out DDRD, rInitRegs
+	ldi	rInitRegs, 0b00111111
+	out DDRB, rInitRegs
 	out SPH, rTemp
 	ldi rTemp, LOW(RAMEND)
 	out SPL, rTemp
-loop:
-	ldi	rOne, 0b01000000
-	out	PORTD, rOne
-	ldi	rOne, 0b00000001
-	out PORTC, rOne
+reset:
+	ldi rRowCountC, 0b00000001
+	ldi rRowCountD, 0b00000000
 	jmp	loop
+plusD:
+	lsl rRowCountD
+	jmp loop
+initD:
+	ldi rRowCountD, 0b00000100
+	ldi	rRowCountC, 0b00000000
+	jmp loop
+plusC:
+	lsl	rRowCountC
+loop:
+	// PORT D
+	ldi	rToRegister, 0b11000000
+	or	rToRegister, rRowCountD
+	out	PORTD, rToRegister
+	// PORT B
+	ldi	rToRegister, 0b00111111
+	out	PORTB, rToRegister
+	// PORT C
+	out PORTC, rRowCountC
+	cpi	rRowCountD, 0b00100000
+	brsh reset
+	cpi	rRowCountD, 0b00000100
+	brsh plusD
+	cpi	rRowCountC, 0b00001000
+	brsh initD
+	jmp	plusC
