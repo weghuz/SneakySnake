@@ -1,0 +1,3 @@
+"C:\Program Files (x86)\Arduino\hardware\tools\avr\bin\avrdude.exe" -C "C:\Program Files (x86)\Ard
+uino\hardware\tools\avr\etc\avrdude.conf" -patmega328p -Pcom7 -carduino -b115200
+ -Uflash:w:SneakySnake.hex
