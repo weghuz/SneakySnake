@@ -31,28 +31,21 @@ init:
 	// Initiera Matrisen i Minnet
 	ldi	YH, HIGH(matrix*2)
 	ldi	YL, LOW(matrix*2)
-	// Ladda in matrisen rad 0
+	// Ladda in matrisens rader
 	ldi	rMatrixTemp, 0b10000000
 	st	Y+, rMatrixTemp
-	// Ladda in matrisen rad 1
 	ldi	rMatrixTemp, 0b00000001
 	st	Y+, rMatrixTemp
-	// Ladda in matrisen rad 2
 	ldi	rMatrixTemp, 0b00110000
 	st	Y+, rMatrixTemp
-	// Ladda in matrisen rad 3
 	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
-	// Ladda in matrisen rad 4
 	ldi	rMatrixTemp, 0b00000001
 	st	Y+, rMatrixTemp
-	// Ladda in matrisen rad 5
 	ldi	rMatrixTemp, 0b00100000
 	st	Y+, rMatrixTemp
-	// Ladda in matrisen rad 6
 	ldi	rMatrixTemp, 0b00000100
 	st	Y+, rMatrixTemp
-	// Ladda in matrisen rad 7
 	ldi	rMatrixTemp, 0b00001000
 	st	Y, rMatrixTemp
 	// Initiera PORTB
@@ -69,16 +62,20 @@ init:
 	out SPH, rTemp
 	ldi rTemp, LOW(RAMEND)
 	out SPL, rTemp
-	ldi	rTemp, 0
 reset:
 	ldi	YH, HIGH(matrix*2)
 	ldi	YL, LOW((matrix*2)+7)
 	ldi	rTemp2, 0b00000001
 	ldi	rTemp, 0b00000000
-	rjmp checkrow
+	jmp checkrow
 plusC:
 	lsl	rTemp2
-	rjmp checkrow
+	jmp checkrow
+setDrow:
+	ldi	rTemp2, 0b00000000
+	ldi	rTemp, 0b00000100
+plusD:
+	lsl rTemp
 checkrow:
 	ld	rMatrixTemp, Y
 	lsl	rMatrixTemp
@@ -102,13 +99,6 @@ loop:
 	// Wait for 100 loops
 	ldi rArg, 100
 	rcall wait
-	// Check if loop has gone through all the rows
-	cpi	YL, LOW(matrix*2)
-	breq reset
-	// Check if 4 first rows are lit
-	cpi	rTemp2, 0b0001000
-	brsh reset
-	subi YL, 1
 	// Reset Output to turn off lights on display.
 	ldi	rOutputB, 0b00000000
 	ldi	rOutputC, 0b00000000
@@ -119,8 +109,19 @@ loop:
 	// Wait for one loop
 	ldi	rArg, 1
 	rcall wait
+	// Check if loop has gone through all the rows
+	cpi	YL, LOW(matrix*2)
+	breq reset
+	// Subtract the iterator ( Y adress is the Matrix )
+	subi YL, 1
+	// Check if D rows are being lit and if so plus it
+	cpi	rTemp, 0b0000100
+	brsh plusD
+	// Check if 4 first rows are lit
+	cpi	rTemp2, 0b0001000
+	brsh setDrow
 	// Read Next Row
-	brsh plusC
+	jmp plusC
 	// This is a waiting Subroutine, it takes one argument in rArg and it is the number of times it loops.
 wait:
 	ldi	rWait, 0

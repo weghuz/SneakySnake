@@ -24,11 +24,13 @@
   <matrix><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>21</LINE></matrix>
   <snake><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>22</LINE></snake>
   <init><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>30</LINE></init>
-  <reset><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>73</LINE></reset>
-  <checkrow><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>82</LINE></checkrow>
-  <plusC><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>79</LINE></plusC>
-  <loop><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>97</LINE></loop>
-  <wait><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>125</LINE></wait>
-  <waitloop><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>127</LINE></waitloop>
+  <reset><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>65</LINE></reset>
+  <checkrow><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>79</LINE></checkrow>
+  <plusC><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>71</LINE></plusC>
+  <setDrow><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>74</LINE></setDrow>
+  <plusD><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>77</LINE></plusD>
+  <loop><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>94</LINE></loop>
+  <wait><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>126</LINE></wait>
+  <waitloop><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>128</LINE></waitloop>
  </LABELS>
 </ASSEMBLER_INFO>
