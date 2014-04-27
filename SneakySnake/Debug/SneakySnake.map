@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Fri Apr 25 16:24:10 2014
+AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Sun Apr 27 15:50:16 2014
 
 
 EQU  SIGNATURE_000 0000001e
@@ -700,12 +700,16 @@ DEF  rOutputB     r19
 DEF  rOutputC     r20
 DEF  rOutputD     r21
 DEF  rMatrixTemp  r22
+DEF  rWait        r23
+DEF  rArg         r24
 EQU  NUM_COLUMNS  00000008
 EQU  MAX_LENGTH   00000019
 DSEG matrix       00000100
 DSEG snake        00000108
 CSEG init         00000034
 CSEG reset        00000051
-CSEG checkrow     0000005a
-CSEG plusC        00000057
-CSEG loop         0000006b
+CSEG checkrow     00000058
+CSEG plusC        00000056
+CSEG loop         00000066
+CSEG wait         00000079
+CSEG waitloop     0000007a

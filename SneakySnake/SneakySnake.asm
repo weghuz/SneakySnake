@@ -12,6 +12,8 @@
 .DEF rOutputC		= r20
 .DEF rOutputD		= r21
 .DEF rMatrixTemp	= r22
+.DEF rWait			= r23
+.DEF rArg			= r24
 
 .EQU NUM_COLUMNS	= 8
 .EQU MAX_LENGTH		= 25
@@ -26,32 +28,44 @@ snake:		.BYTE MAX_LENGTH+1
 //... fler interrupts
 .ORG INT_VECTORS_SIZE
 init:
-	// Sätt stackpekaren till högsta minnesadressen
+	// Initiera Matrisen i Minnet
 	ldi	YH, HIGH(matrix*2)
 	ldi	YL, LOW(matrix*2)
+	// Ladda in matrisen rad 0
 	ldi	rMatrixTemp, 0b10000000
 	st	Y+, rMatrixTemp
+	// Ladda in matrisen rad 1
 	ldi	rMatrixTemp, 0b00000001
 	st	Y+, rMatrixTemp
+	// Ladda in matrisen rad 2
 	ldi	rMatrixTemp, 0b00110000
 	st	Y+, rMatrixTemp
+	// Ladda in matrisen rad 3
 	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
+	// Ladda in matrisen rad 4
 	ldi	rMatrixTemp, 0b00000001
 	st	Y+, rMatrixTemp
+	// Ladda in matrisen rad 5
 	ldi	rMatrixTemp, 0b00100000
 	st	Y+, rMatrixTemp
+	// Ladda in matrisen rad 6
 	ldi	rMatrixTemp, 0b00000100
 	st	Y+, rMatrixTemp
+	// Ladda in matrisen rad 7
 	ldi	rMatrixTemp, 0b00001000
 	st	Y, rMatrixTemp
-	ldi rTemp, HIGH(RAMEND)
-	ldi	rTemp2, 0b11001111
-	out	DDRC, rTemp2
-	ldi	rTemp2, 0b11111111
-	out DDRD, rTemp2
+	// Initiera PORTB
 	ldi	rTemp2, 0b00111111
 	out DDRB, rTemp2
+	// Initiera PORTC
+	ldi	rTemp2, 0b11001111
+	out	DDRC, rTemp2
+	// Initiera PORTD
+	ldi	rTemp2, 0b11111111
+	out DDRD, rTemp2
+	// Sätt stackpekaren till högsta minnesadressen
+	ldi rTemp, HIGH(RAMEND)
 	out SPH, rTemp
 	ldi rTemp, LOW(RAMEND)
 	out SPL, rTemp
@@ -61,14 +75,11 @@ reset:
 	ldi	YL, LOW((matrix*2)+7)
 	ldi	rTemp2, 0b00000001
 	ldi	rTemp, 0b00000000
-	jmp checkrow
+	rjmp checkrow
 plusC:
 	lsl	rTemp2
-	jmp checkrow
+	rjmp checkrow
 checkrow:
-	ldi	rOutputB, 0b00000000
-	ldi	rOutputC, 0b00000000
-	ldi	rOutputD, 0b00000000
 	ld	rMatrixTemp, Y
 	lsl	rMatrixTemp
 	lsl	rMatrixTemp
@@ -84,14 +95,38 @@ checkrow:
 	or	rOutputB, rMatrixTemp
 	or	rOutputC, rTemp2
 loop:
-
+	// Light the display Leds with output
 	out	PORTB, rOutputB
 	out PORTC, rOutputC
 	out	PORTD, rOutputD
-
+	// Wait for 100 loops
+	ldi rArg, 100
+	rcall wait
+	// Check if loop has gone through all the rows
 	cpi	YL, LOW(matrix*2)
 	breq reset
+	// Check if 4 first rows are lit
 	cpi	rTemp2, 0b0001000
 	brsh reset
 	subi YL, 1
-	jmp	plusC
+	// Reset Output to turn off lights on display.
+	ldi	rOutputB, 0b00000000
+	ldi	rOutputC, 0b00000000
+	ldi	rOutputD, 0b00000000
+	out	PORTB, rOutputB
+	out PORTC, rOutputC
+	out	PORTD, rOutputD
+	// Wait for one loop
+	ldi	rArg, 1
+	rcall wait
+	// Read Next Row
+	brsh plusC
+	// This is a waiting Subroutine, it takes one argument in rArg and it is the number of times it loops.
+wait:
+	ldi	rWait, 0
+waitloop:
+	subi rWait, -1
+	cp	rWait, rArg
+	brne waitloop
+	// ret Returns to caller from subroutine
+ret
