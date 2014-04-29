@@ -42,13 +42,13 @@ InitializeSnake: // Initierar Masken i minnet
 	ldi	YL, LOW(snake*2)
 
 	// Sätter
-	ldi	rMatrixTemp, 0b00010100
+	ldi	rMatrixTemp, 0x11
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0b00100100
+	ldi	rMatrixTemp, 0x12
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0b00110100
+	ldi	rMatrixTemp, 0x13
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0b01000100
+	ldi	rMatrixTemp, 0x14
 	st	Y, rMatrixTemp
 
 	// Laddar in värdet 4 till rSL; rSL = 4
@@ -87,7 +87,6 @@ InitializeSnake: // Initierar Masken i minnet
 	ldi	rTemp, 0b11001111
 	out	DDRC, rTemp
 	// Initiera PORTD
-	
 	ldi	rTemp, 0b11111111
 	out DDRD, rTemp
 
@@ -113,81 +112,37 @@ GameLoop:
 	// Initiera Matrisen i Minnet
 	ldi	YH, HIGH(matrix*2)
 	ldi	YL, LOW(matrix*2)
-	
-	// Load ADMUX to rTemp
-	lds rTemp, ADMUX
-	// Clear ADMUX from input register get
-	andi rTemp, 0xF0
-	// 1<<2 = 0b00000100
-	// get Input from Y-axis
-	sbr rTemp, 1<<2
-	sts ADMUX, rTemp
-	// Start AD converting
-	lds rTemp, ADCSRA
-	sbr rTemp, 1<<6
-	sts ADCSRA, rTemp
-waitForAD1:
-	// Busy Wait loop
-	ldi rArg, 1
-	rcall wait
-	// sbrc = Skip if bit 6 in register is cleared
-	lds rTemp, ADCSRA
-	sbrc rTemp, 6
-	jmp waitForAD1
+
+	// Get input from X-axis
 
 	// Spara matrisens rad0
-	lds rMatrixTemp, ADCH
-	//lds rTemp, ADCL
+	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
-
 	// Spara matrisens rad1
-	// ldi	rMatrixTemp, 0b00000000
+	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
 	// Spara matrisens rad2
-	//ldi	rMatrixTemp, 0b00000000
+	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
 	// Spara matrisens rad3
-	//ldi	rMatrixTemp, 0b00000000
+	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp	
-
-	// Load ADMUX to rTemp
-	lds rTemp, ADMUX
-	// Clear ADMUX from input register get
-	andi rTemp, 0xF0
-	// 1<<2 = 0b00000100
-	ori rTemp, 5
-	sts ADMUX, rTemp
-	
-	// Start AD converting
-	lds rTemp, ADCSRA
-	sbr rTemp, 1<<6
-	sts ADCSRA, rTemp
-waitForAD2:
-	// Busy Wait loop
-	ldi rArg, 1
-	rcall wait
-	// sbrc = Skip if bit 6 in register is cleared
-	lds rTemp, ADCSRA
-	sbrc rTemp, 6
-	jmp waitForAD2
-
 	// Spara matrisens rad4
-	lds rMatrixTemp, ADCH
+	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
-	
 	// Spara matrisens rad5
-	//ldi	rMatrixTemp, 0b00000000
+	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
 	// Spara matrisens rad6
-	//ldi	rMatrixTemp, 0b00000000
+	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
 	// Spara matrisens rad7
-	//ldi	rMatrixTemp, 0b00000000
+	ldi	rMatrixTemp, 0b11000101
 	st	Y, rMatrixTemp
 	// Här börjar draw funktionen
 reset:
 	ldi	YH, HIGH(matrix*2)
-	ldi	YL, LOW((matrix*2)+7)
+	ldi	YL, LOW((matrix*2))
 	ldi	rTemp2, 0b00000001
 	ldi	rTemp, 0b00000000
 	jmp checkrow
@@ -205,6 +160,12 @@ checkrow:
 	ldi rOutputC, 0
 	ldi rOutputB, 0
 	ld	rMatrixTemp, Y
+
+	// Invert the bits of Matrix row
+	mov rArg, rMatrixTemp
+	call invertBits
+	mov rMatrixTemp, rArg
+
 	lsl	rMatrixTemp
 	lsl	rMatrixTemp
 	lsl	rMatrixTemp
@@ -214,6 +175,12 @@ checkrow:
 	or	rOutputD, rMatrixTemp
 	or	rOutputD, rTemp
 	ld	rMatrixTemp, Y
+	
+	// Invert the bits of Matrix row
+	mov rArg, rMatrixTemp
+	call invertBits
+	mov rMatrixTemp, rArg
+
 	lsr	rMatrixTemp
 	lsr	rMatrixTemp
 	or	rOutputB, rMatrixTemp
@@ -224,9 +191,8 @@ loop:
 	out PORTC, rOutputC
 	out	PORTD, rOutputD
 	// Wait for 100 loops
-	ldi rArg, 255
+	ldi rArg, 20
 	rcall wait
-	rcall SnakeToMatrixDisplay
 	// Reset Output to turn off lights on display.
 	ldi	rOutputB, 0b00000000
 	ldi	rOutputC, 0b00000000
@@ -238,12 +204,12 @@ loop:
 	ldi	rArg, 1
 	rcall wait
 	// Check if loop has gone through all the rows
-	cpi	YL, LOW(matrix*2)
+	cpi	YL, LOW(matrix*2+7)
 	brne dontJump
 	jmp GameLoop
 dontJump:
 	// Subtract the iterator ( Y adress is the Matrix )
-	subi YL, 1
+	subi YL, -1
 	// Check if D rows are being lit and if so plus it
 	cpi	rTemp, 0b0000100
 	brsh plusD
@@ -262,7 +228,7 @@ waitloop:
 	// ret Returns to caller from subroutine
 ret
 
-
+/*
 SnakeMove:
 
 	// rTemp = Kordinaterna för Huvudet
@@ -375,7 +341,6 @@ BitSwitch:
 	cpi rTemp3, 0
 brne BitSwitch
 	// rTemp ska nu plussar/or med MatrisDisplayen
-
 	ld	rTemp, X
 	or rTemp2, rTemp
 	st X, rTemp
@@ -383,13 +348,62 @@ brne BitSwitch
 	subi YL, -1
 	cp rMatrixTemp, rSL
 brne STMDLoop
-ret
-
-
-	// Loopa igenom alla kroppsdelar
+ret // Loopa igenom alla kroppsdelar
+*/
 timerCount:
 	mov rTemp, rTimerCount
 	subi rTemp, -1
 	mov rTimerCount, rTemp
-	reti
+reti
 
+invertBits:
+	mov rTemp3, rArg
+	bst rTemp3, 0
+	bld rArg, 7
+	bst rTemp3, 1
+	bld rArg, 6
+	bst rTemp3, 2
+	bld rArg, 5
+	bst rTemp3, 3
+	bld rArg, 4
+	bst rTemp3, 4
+	bld rArg, 3
+	bst rTemp3, 5
+	bld rArg, 2
+	bst rTemp3, 6
+	bld rArg, 1
+	bst rTemp3, 7
+	bld rArg, 0
+ret
+
+getInput:
+	// Load ADMUX to rTemp
+	lds rTemp, ADMUX
+	// Clear ADMUX from input register get
+	andi rTemp, 0xF0
+	// get Input from rArg, send in 4 for X-axis and 5 for Y-axis
+	or  rTemp, rArg
+	// reset rArg (Argument to subroutine) for next call
+	ldi rArg, 0
+	sts ADMUX, rTemp
+	// Start AD converting
+	lds rTemp, ADCSRA
+	sbr rTemp, 1<<6
+	sts ADCSRA, rTemp
+waitForAD:
+	// Busy Wait loop
+	ldi rArg, 1
+	rcall wait
+	// sbrc = Skip if bit 6 in register is cleared
+	lds rTemp, ADCSRA
+	sbrc rTemp, 6
+	jmp waitForAD
+	// --Call for X-Axis--
+	//   ldi rArg, 4
+	//   call getInput
+	// --Call for Y-Axis--
+	//   ldi rArg, 5
+	//   call getInput
+	// --Get value after convert is done with--
+	//   lds rTemp, ADCH
+ret
