@@ -4,7 +4,6 @@
  *  Created: 2014-04-25 08:52:10
  *   Author: Rasmus Wallberg, Patrik Johansson, Johan Lautakoski
  */ 
-
 .DEF rZero			= r0
 .DEF rSL			= r9 // SL = SnakeLength, current snake length
 .DEF rDir			= r10
@@ -18,6 +17,7 @@
 .DEF rMatrixTemp	= r22
 .DEF rWait			= r23
 .DEF rArg			= r24
+.Def rTimerCount	= r25
 
 .EQU NUM_COLUMNS   = 8
 
@@ -31,6 +31,8 @@ snake:    .BYTE MAX_LENGTH+1
 // Interrupt vector table
 .ORG 0x0000
 	jmp init // Reset vector
+.ORG 0x0020
+	 jmp timerCount
 //... fler interrupts
 .ORG INT_VECTORS_SIZE
 init:
@@ -82,6 +84,14 @@ InitializeSnake: // Initierar Masken i minnet
 	// Initiera PORTD
 	ldi	rTemp2, 0b11111111
 	out DDRD, rTemp2
+	//timer ska paceras någon anna stans
+	ldi rTimerCount, 0
+	ldi rTemp, (1<<CS02) | (1<<CS00)
+	out TCCR0B, rTemp
+	sei
+	ldi rTemp, 0b00000001
+	sts TIMSK0,rTemp
+	
 	// Sätt stackpekaren till högsta minnesadressen
 	ldi YH, HIGH( adress * 2)
 	ldi YL, LOW( adress * 2 )
@@ -198,4 +208,6 @@ MoveLeft:
 
 
 	// Loopa igenom alla kroppsdelar
-	
+timerCount:
+	subi rTimerCount, -1
+	reti
