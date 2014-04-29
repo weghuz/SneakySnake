@@ -1,5 +1,9 @@
 
+<<<<<<< HEAD
 AVRASM ver. 2.1.52  C:\Users\GamerOne\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue Apr 29 11:55:14 2014
+=======
+AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue Apr 29 11:58:07 2014
+>>>>>>> 27cbc221b21faaf50bcda5c9021a3f579c7e483c
 
 
 EQU  SIGNATURE_000 0000001e
@@ -698,13 +702,14 @@ DEF  rSL          r9
 DEF  rDir         r10
 DEF  rTemp        r16
 DEF  rTemp2       r17
-DEF  rInitRegs    r18
-DEF  rOutputB     r19
-DEF  rOutputC     r20
-DEF  rOutputD     r21
-DEF  rMatrixTemp  r22
-DEF  rWait        r23
-DEF  rArg         r24
+DEF  rTemp3       r18
+DEF  rInitRegs    r19
+DEF  rOutputB     r20
+DEF  rOutputC     r21
+DEF  rOutputD     r22
+DEF  rMatrixTemp  r23
+DEF  rWait        r24
+DEF  rArg         r25
 EQU  NUM_COLUMNS  00000008
 EQU  MAX_LENGTH   00000019
 DSEG adress       00000100
@@ -712,6 +717,7 @@ DSEG matrix       00000110
 DSEG snake        00000118
 CSEG init         00000034
 CSEG InitializeSnake 00000034
+<<<<<<< HEAD
 CSEG reset        00000066
 CSEG checkrow     00000072
 CSEG plusC        0000006c
@@ -725,3 +731,22 @@ CSEG MoveUp       000000a7
 CSEG MoveRight    000000a7
 CSEG MoveDown     000000a7
 CSEG MoveLeft     000000a7
+=======
+CSEG GameLoop     00000064
+CSEG waitForAD1   00000071
+CSEG wait         000000cc
+CSEG waitForAD2   00000089
+CSEG reset        00000096
+CSEG checkrow     000000a3
+CSEG plusC        0000009c
+CSEG setDrow      0000009f
+CSEG plusD        000000a2
+CSEG loop         000000b4
+CSEG dontJump     000000c5
+CSEG waitloop     000000cd
+CSEG SnakeMove    000000d1
+CSEG MoveUp       000000dd
+CSEG MoveRight    000000dd
+CSEG MoveDown     000000dd
+CSEG MoveLeft     000000dd
+>>>>>>> 27cbc221b21faaf50bcda5c9021a3f579c7e483c

@@ -4,20 +4,24 @@
  *  Created: 2014-04-25 08:52:10
  *   Author: Rasmus Wallberg, Patrik Johansson, Johan Lautakoski
  */ 
+
 .DEF rZero			= r0
 .DEF rSL			= r9 // SL = SnakeLength, current snake length
 .DEF rDir			= r10
 
+.DEF rTimerCount	= r15
 .DEF rTemp			= r16
 .DEF rTemp2			= r17
-.DEF rInitRegs		= r18
-.DEF rOutputB		= r19
-.DEF rOutputC		= r20
-.DEF rOutputD		= r21
-.DEF rMatrixTemp	= r22
-.DEF rWait			= r23
-.DEF rArg			= r24
-.Def rTimerCount	= r25
+
+.DEF rTemp3			= r18
+.DEF rInitRegs		= r19
+.DEF rOutputB		= r20
+.DEF rOutputC		= r21
+.DEF rOutputD		= r22
+.DEF rMatrixTemp	= r23
+.DEF rWait			= r24
+.DEF rArg			= r25
+
 
 .EQU NUM_COLUMNS   = 8
 
@@ -59,31 +63,38 @@ InitializeSnake: // Initierar Masken i minnet
 	ldi	YH, HIGH(matrix*2)
 	ldi	YL, LOW(matrix*2)
 	// Ladda in matrisens rader
-	ldi	rMatrixTemp, 0b10000000
+	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0b00000001
+	ldi	rMatrixTemp, 0b00011110
+	st	Y+, rMatrixTemp
+	ldi	rMatrixTemp, 0b00010000
+	st	Y+, rMatrixTemp
+	ldi	rMatrixTemp, 0b00010000
 	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0b00110000
 	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0b00000001
+	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0b00100000
-	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0b00000100
-	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0b00001000
+	ldi	rMatrixTemp, 0b00000000
 	st	Y, rMatrixTemp
+	// Initiera AD-omvandlare
+	ldi	rTemp, 0b01100000
+	sts ADMUX, rTemp
+	ldi rTemp, 0b10000111
+	sts ADCSRA, rTemp
 	// Initiera PORTB
-	ldi	rTemp2, 0b00111111
-	out DDRB, rTemp2
+	ldi	rTemp, 0b11111111
+	out DDRB, rTemp
 	// Initiera PORTC
-	ldi	rTemp2, 0b11001111
-	out	DDRC, rTemp2
+	ldi	rTemp, 0b11001111
+	out	DDRC, rTemp
 	// Initiera PORTD
-	ldi	rTemp2, 0b11111111
-	out DDRD, rTemp2
+	
+	ldi	rTemp, 0b11111111
+	out DDRD, rTemp
+
 	//timer ska paceras någon anna stans
 	ldi rTimerCount, 0
 	ldi rTemp, (1<<CS02) | (1<<CS00)
@@ -91,19 +102,92 @@ InitializeSnake: // Initierar Masken i minnet
 	sei
 	ldi rTemp, 0b00000001
 	sts TIMSK0,rTemp
-	
+
 	// Sätt stackpekaren till högsta minnesadressen
 	ldi YH, HIGH( adress * 2)
 	ldi YL, LOW( adress * 2 )
-	
-	ldi r21, 0xaa
-	st Y, r21
-
 
 	ldi rTemp, HIGH(RAMEND)
 	out SPH, rTemp
 	ldi rTemp, LOW(RAMEND)
 	out SPL, rTemp
+// Här skall all spellogik vara
+GameLoop:
+	// Initiera Matrisen i Minnet
+	ldi	YH, HIGH(matrix*2)
+	ldi	YL, LOW(matrix*2)
+	
+	// Load ADMUX to rTemp
+	lds rTemp, ADMUX
+	// Clear ADMUX from input register get
+	andi rTemp, 0xF0
+	// 1<<2 = 0b00000100
+	// get Input from Y-axis
+	sbr rTemp, 1<<2
+	sts ADMUX, rTemp
+	// Start AD converting
+	lds rTemp, ADCSRA
+	sbr rTemp, 1<<6
+	sts ADCSRA, rTemp
+waitForAD1:
+	// Busy Wait loop
+	ldi rArg, 1
+	rcall wait
+	// sbrc = Skip if bit 6 in register is cleared
+	lds rTemp, ADCSRA
+	sbrc rTemp, 6
+	jmp waitForAD1
+
+	// Spara matrisens rad0
+	lds rMatrixTemp, ADCH
+	//lds rTemp, ADCL
+	st	Y+, rMatrixTemp
+
+	// Spara matrisens rad1
+	// ldi	rMatrixTemp, 0b00000000
+	st	Y+, rMatrixTemp
+	// Spara matrisens rad2
+	//ldi	rMatrixTemp, 0b00000000
+	st	Y+, rMatrixTemp
+	// Spara matrisens rad3
+	//ldi	rMatrixTemp, 0b00000000
+	st	Y+, rMatrixTemp	
+
+	// Load ADMUX to rTemp
+	lds rTemp, ADMUX
+	// Clear ADMUX from input register get
+	andi rTemp, 0xF0
+	// 1<<2 = 0b00000100
+	ori rTemp, 5
+	sts ADMUX, rTemp
+	
+	// Start AD converting
+	lds rTemp, ADCSRA
+	sbr rTemp, 1<<6
+	sts ADCSRA, rTemp
+waitForAD2:
+	// Busy Wait loop
+	ldi rArg, 1
+	rcall wait
+	// sbrc = Skip if bit 6 in register is cleared
+	lds rTemp, ADCSRA
+	sbrc rTemp, 6
+	jmp waitForAD2
+
+	// Spara matrisens rad4
+	lds rMatrixTemp, ADCH
+	st	Y+, rMatrixTemp
+	
+	// Spara matrisens rad5
+	//ldi	rMatrixTemp, 0b00000000
+	st	Y+, rMatrixTemp
+	// Spara matrisens rad6
+	//ldi	rMatrixTemp, 0b00000000
+	st	Y+, rMatrixTemp
+	// Spara matrisens rad7
+	//ldi	rMatrixTemp, 0b00000000
+	st	Y, rMatrixTemp
+	// Här börjar draw funktionen
 reset:
 	ldi	YH, HIGH(matrix*2)
 	ldi	YL, LOW((matrix*2)+7)
@@ -116,9 +200,13 @@ plusC:
 setDrow:
 	ldi	rTemp2, 0b00000000
 	ldi	rTemp, 0b00000100
+	rjmp checkrow
 plusD:
 	lsl rTemp
 checkrow:
+	ldi rOutputD, 0
+	ldi rOutputC, 0
+	ldi rOutputB, 0
 	ld	rMatrixTemp, Y
 	lsl	rMatrixTemp
 	lsl	rMatrixTemp
@@ -139,7 +227,7 @@ loop:
 	out PORTC, rOutputC
 	out	PORTD, rOutputD
 	// Wait for 100 loops
-	ldi rArg, 100
+	ldi rArg, 255
 	rcall wait
 	// Reset Output to turn off lights on display.
 	ldi	rOutputB, 0b00000000
@@ -153,7 +241,9 @@ loop:
 	rcall wait
 	// Check if loop has gone through all the rows
 	cpi	YL, LOW(matrix*2)
-	breq reset
+	brne dontJump
+	jmp GameLoop
+dontJump:
 	// Subtract the iterator ( Y adress is the Matrix )
 	subi YL, 1
 	// Check if D rows are being lit and if so plus it
