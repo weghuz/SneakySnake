@@ -13,8 +13,10 @@
 .DEF rRowCountD	   = r20
 
 .EQU NUM_COLUMNS   = 8
+
 .EQU MAX_LENGTH    = 25
 .DSEG
+adress:		.BYTE 16
 matrix:   .BYTE 8
 snake:    .BYTE MAX_LENGTH+1
 
@@ -26,6 +28,13 @@ snake:    .BYTE MAX_LENGTH+1
 .ORG INT_VECTORS_SIZE
 init:
 	// Sätt stackpekaren till högsta minnesadressen
+	ldi YH, HIGH( adress * 2)
+	ldi YL, LOW( adress * 2 )
+	
+	ldi r21, 0xaa
+	st Y, r21
+
+
 	ldi rTemp, HIGH(RAMEND)
 	ldi	rInitRegs, 0b11001111
 	out	DDRC, rInitRegs
