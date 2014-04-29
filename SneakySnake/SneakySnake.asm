@@ -5,6 +5,10 @@
  *   Author: Rasmus Wallberg, Patrik Johansson, Johan Lautakoski
  */ 
 
+.DEF rZero			= r0
+.DEF rSL			= r9 // SL = SnakeLength, current snake length
+.DEF rDir			= r10
+
 .DEF rTemp			= r16
 .DEF rTemp2			= r17
 .DEF rInitRegs		= r18
@@ -30,6 +34,25 @@ snake:    .BYTE MAX_LENGTH+1
 //... fler interrupts
 .ORG INT_VECTORS_SIZE
 init:
+
+InitializeSnake: // Initierar Masken i minnet
+	ldi	YH, HIGH(snake*2)
+	ldi	YL, LOW(snake*2)
+
+	// Sätter
+	ldi	rMatrixTemp, 0b00100100
+	st	Y+, rMatrixTemp
+	ldi	rMatrixTemp, 0b00110100
+	st	Y+, rMatrixTemp
+	ldi	rMatrixTemp, 0b01000100
+	st	Y+, rMatrixTemp
+	ldi	rMatrixTemp, 0b01010100
+	st	Y, rMatrixTemp
+
+	// Laddar in värdet 4 till rSL; rSL = 4
+	ldi rTemp, 4
+	MOV rSL, rTemp
+
 	// Initiera Matrisen i Minnet
 	ldi	YH, HIGH(matrix*2)
 	ldi	YL, LOW(matrix*2)
@@ -140,3 +163,39 @@ waitloop:
 	brne waitloop
 	// ret Returns to caller from subroutine
 ret
+
+
+
+
+SnakeMove:
+	ldi	YH, HIGH(snake*2)
+	ldi	YL, LOW(snake*2)
+
+	// Hämta första huvudet o flytta den till den riktningen som joysticen riktar mot
+	ld	rTemp, Y 					// Hämta värdet(Koordinaterna)
+	add rTemp2, rDir				// Laddar in riktningen av maskenshuvud
+
+	cpi	rTemp2, 0			// if( rDir == 0 )	-> Move Up
+	breq MoveUp
+	cpi	rTemp2, 1			// if( rDir == 1 )	-> Move Right
+	breq MoveRight
+	cpi	rTemp2, 2			// if( rDir == 2 )	-> Move Down
+	breq MoveDown
+	cpi	rTemp2, 3			// if( rDir == 3 )	-> Move Left
+	breq MoveLeft
+
+MoveUp:
+
+
+MoveRight:
+
+
+MoveDown:
+
+
+MoveLeft:
+
+
+
+	// Loopa igenom alla kroppsdelar
+	

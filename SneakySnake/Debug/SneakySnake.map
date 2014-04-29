@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue Apr 29 08:25:10 2014
+AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue Apr 29 09:49:10 2014
 
 
 EQU  SIGNATURE_000 0000001e
@@ -693,6 +693,9 @@ EQU  ACIaddr      0000002e
 EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
+DEF  rZero        r0
+DEF  rSL          r9
+DEF  rDir         r10
 DEF  rTemp        r16
 DEF  rTemp2       r17
 DEF  rInitRegs    r18
@@ -708,11 +711,17 @@ DSEG adress       00000100
 DSEG matrix       00000110
 DSEG snake        00000118
 CSEG init         00000034
-CSEG reset        00000054
-CSEG checkrow     00000060
-CSEG plusC        0000005a
-CSEG setDrow      0000005d
-CSEG plusD        0000005f
-CSEG loop         0000006e
-CSEG wait         00000084
-CSEG waitloop     00000085
+CSEG InitializeSnake 00000034
+CSEG reset        00000060
+CSEG checkrow     0000006c
+CSEG plusC        00000066
+CSEG setDrow      00000069
+CSEG plusD        0000006b
+CSEG loop         0000007a
+CSEG wait         00000090
+CSEG waitloop     00000091
+CSEG SnakeMove    00000095
+CSEG MoveUp       000000a1
+CSEG MoveRight    000000a1
+CSEG MoveDown     000000a1
+CSEG MoveLeft     000000a1
