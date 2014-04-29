@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Sun Apr 27 15:59:23 2014
+AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue Apr 29 10:13:33 2014
 
 
 EQU  SIGNATURE_000 0000001e
@@ -693,25 +693,29 @@ EQU  ACIaddr      0000002e
 EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
+DEF  rTempStatic  r15
 DEF  rTemp        r16
 DEF  rTemp2       r17
-DEF  rInitRegs    r18
-DEF  rOutputB     r19
-DEF  rOutputC     r20
-DEF  rOutputD     r21
-DEF  rMatrixTemp  r22
-DEF  rWait        r23
-DEF  rArg         r24
+DEF  rTemp3       r18
+DEF  rInitRegs    r19
+DEF  rOutputB     r20
+DEF  rOutputC     r21
+DEF  rOutputD     r22
+DEF  rMatrixTemp  r23
+DEF  rWait        r24
+DEF  rArg         r25
 EQU  NUM_COLUMNS  00000008
 EQU  MAX_LENGTH   00000019
 DSEG matrix       00000100
 DSEG snake        00000108
 CSEG init         00000034
-CSEG reset        00000050
-CSEG checkrow     0000005c
-CSEG plusC        00000056
-CSEG setDrow      00000059
-CSEG plusD        0000005b
-CSEG loop         0000006a
-CSEG wait         00000080
-CSEG waitloop     00000081
+CSEG GameLoop     0000005b
+CSEG reset        0000005b
+CSEG checkrow     00000068
+CSEG plusC        00000061
+CSEG setDrow      00000064
+CSEG plusD        00000067
+CSEG loop         00000076
+CSEG wait         0000008e
+CSEG dontJump     00000087
+CSEG waitloop     0000008f

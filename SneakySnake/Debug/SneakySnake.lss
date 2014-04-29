@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Sun Apr 27 15:59:23 2014
+AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue Apr 29 10:13:33 2014
 
 [builtin](2): Including file 'C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR Assembler\Native\2.1.1103\avrassembler\Include\m328Pdef.inc'
                  
@@ -987,16 +987,17 @@ AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\Snea
                   *  Created: 2014-04-25 08:52:10
                   *   Author: Rasmus Wallberg, Patrik Johansson, Johan Lautakoski
                   */ 
-                 
+                 .DEF rTempStatic	= r15
                  .DEF rTemp			= r16
                  .DEF rTemp2			= r17
-                 .DEF rInitRegs		= r18
-                 .DEF rOutputB		= r19
-                 .DEF rOutputC		= r20
-                 .DEF rOutputD		= r21
-                 .DEF rMatrixTemp	= r22
-                 .DEF rWait			= r23
-                 .DEF rArg			= r24
+                 .DEF rTemp3			= r18
+                 .DEF rInitRegs		= r19
+                 .DEF rOutputB		= r20
+                 .DEF rOutputC		= r21
+                 .DEF rOutputD		= r22
+                 .DEF rMatrixTemp	= r23
+                 .DEF rWait			= r24
+                 .DEF rArg			= r25
                  
                  .EQU NUM_COLUMNS	= 8
                  .EQU MAX_LENGTH		= 25
@@ -1015,103 +1016,151 @@ AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\Snea
 000034 e0d2      	ldi	YH, HIGH(matrix*2)
 000035 e0c0      	ldi	YL, LOW(matrix*2)
                  	// Ladda in matrisens rader
-000036 e860      	ldi	rMatrixTemp, 0b10000000
-000037 9369      	st	Y+, rMatrixTemp
-000038 e061      	ldi	rMatrixTemp, 0b00000001
-000039 9369      	st	Y+, rMatrixTemp
-00003a e360      	ldi	rMatrixTemp, 0b00110000
-00003b 9369      	st	Y+, rMatrixTemp
-00003c e060      	ldi	rMatrixTemp, 0b00000000
-00003d 9369      	st	Y+, rMatrixTemp
-00003e e061      	ldi	rMatrixTemp, 0b00000001
-00003f 9369      	st	Y+, rMatrixTemp
-000040 e260      	ldi	rMatrixTemp, 0b00100000
-000041 9369      	st	Y+, rMatrixTemp
-000042 e064      	ldi	rMatrixTemp, 0b00000100
-000043 9369      	st	Y+, rMatrixTemp
-000044 e068      	ldi	rMatrixTemp, 0b00001000
-000045 8368      	st	Y, rMatrixTemp
+000036 e070      	ldi	rMatrixTemp, 0b00000000
+000037 9379      	st	Y+, rMatrixTemp
+000038 e17e      	ldi	rMatrixTemp, 0b00011110
+000039 9379      	st	Y+, rMatrixTemp
+00003a e170      	ldi	rMatrixTemp, 0b00010000
+00003b 9379      	st	Y+, rMatrixTemp
+00003c e170      	ldi	rMatrixTemp, 0b00010000
+00003d 9379      	st	Y+, rMatrixTemp
+00003e e370      	ldi	rMatrixTemp, 0b00110000
+00003f 9379      	st	Y+, rMatrixTemp
+000040 e070      	ldi	rMatrixTemp, 0b00000000
+000041 9379      	st	Y+, rMatrixTemp
+000042 e070      	ldi	rMatrixTemp, 0b00000000
+000043 9379      	st	Y+, rMatrixTemp
+000044 e070      	ldi	rMatrixTemp, 0b00000000
+000045 8378      	st	Y, rMatrixTemp
+                 	// Initiera AD-omvandlare
+000046 e600      	ldi	rTemp, 0b01100000
+000047 9300 007c 	sts ADMUX, rTemp
+000049 e807      	ldi rTemp, 0b10000111
+00004a 9300 007a 	sts ADCSRA, rTemp
+                 	// Load ADMUX to rTemp
+00004c 9100 007c 	lds rTemp, ADMUX
+                 	// 1<<2 = 0b00000100
+00004e 7004      	andi rTemp, 1<<2
+00004f 9300 007c 	sts ADMUX, rTemp
+                 
+                 
                  	// Initiera PORTB
-000046 e31f      	ldi	rTemp2, 0b00111111
-000047 b914      	out DDRB, rTemp2
+000051 ef0f      	ldi	rTemp, 0b11111111
+000052 b904      	out DDRB, rTemp
                  	// Initiera PORTC
-000048 ec1f      	ldi	rTemp2, 0b11001111
-000049 b917      	out	DDRC, rTemp2
+000053 ec0f      	ldi	rTemp, 0b11001111
+000054 b907      	out	DDRC, rTemp
                  	// Initiera PORTD
-00004a ef1f      	ldi	rTemp2, 0b11111111
-00004b b91a      	out DDRD, rTemp2
+000055 ef0f      	ldi	rTemp, 0b11111111
+000056 b90a      	out DDRD, rTemp
                  	// Sätt stackpekaren till högsta minnesadressen
-00004c e008      	ldi rTemp, HIGH(RAMEND)
-00004d bf0e      	out SPH, rTemp
-00004e ef0f      	ldi rTemp, LOW(RAMEND)
-00004f bf0d      	out SPL, rTemp
+000057 e008      	ldi rTemp, HIGH(RAMEND)
+000058 bf0e      	out SPH, rTemp
+000059 ef0f      	ldi rTemp, LOW(RAMEND)
+00005a bf0d      	out SPL, rTemp
+                 // Här skall all spellogik vara
+                 GameLoop:
+                 	/*
+                 	// Initiera Matrisen i Minnet
+                 	ldi	YH, HIGH(matrix*2)
+                 	ldi	YL, LOW(matrix*2)
+                 	// Ladda in matrisens rader
+                 	ld	rTemp, Y
+                 	subi rTemp, -1
+                 	st	Y+, rTemp
+                 	ld	rTemp, Y
+                 	subi rTemp, -1
+                 	st	Y+, rTemp
+                 	ld	rTemp, Y
+                 	subi rTemp, -1
+                 	st	Y+, rTemp
+                 	ld	rTemp, Y
+                 	subi rTemp, -1
+                 	st	Y+, rTemp
+                 	ld	rTemp, Y
+                 	subi rTemp, -1
+                 	st	Y+, rTemp
+                 	ld	rTemp, Y
+                 	subi rTemp, -1
+                 	st	Y+, rTemp
+                 	ld	rTemp, Y
+                 	subi rTemp, -1
+                 	st	Y+, rTemp
+                 	ld	rTemp, Y
+                 	subi rTemp, -1
+                 	st	Y, rTemp
+                 	*/
+                 	// Här börjar draw funktionen
                  reset:
-000050 e0d2      	ldi	YH, HIGH(matrix*2)
-000051 e0c7      	ldi	YL, LOW((matrix*2)+7)
-000052 e011      	ldi	rTemp2, 0b00000001
-000053 e000      	ldi	rTemp, 0b00000000
-000054 940c 005c 	jmp checkrow
+00005b e0d2      	ldi	YH, HIGH(matrix*2)
+00005c e0c7      	ldi	YL, LOW((matrix*2)+7)
+00005d e011      	ldi	rTemp2, 0b00000001
+00005e e000      	ldi	rTemp, 0b00000000
+00005f 940c 0068 	jmp checkrow
                  plusC:
-000056 0f11      	lsl	rTemp2
-000057 940c 005c 	jmp checkrow
+000061 0f11      	lsl	rTemp2
+000062 940c 0068 	jmp checkrow
                  setDrow:
-000059 e010      	ldi	rTemp2, 0b00000000
-00005a e004      	ldi	rTemp, 0b00000100
+000064 e010      	ldi	rTemp2, 0b00000000
+000065 e004      	ldi	rTemp, 0b00000100
+000066 c001      	rjmp checkrow
                  plusD:
-00005b 0f00      	lsl rTemp
+000067 0f00      	lsl rTemp
                  checkrow:
-00005c 8168      	ld	rMatrixTemp, Y
-00005d 0f66      	lsl	rMatrixTemp
-00005e 0f66      	lsl	rMatrixTemp
-00005f 0f66      	lsl	rMatrixTemp
-000060 0f66      	lsl	rMatrixTemp
-000061 0f66      	lsl	rMatrixTemp
-000062 0f66      	lsl	rMatrixTemp
-000063 2b56      	or	rOutputD, rMatrixTemp
-000064 2b50      	or	rOutputD, rTemp
-000065 8168      	ld	rMatrixTemp, Y
-000066 9566      	lsr	rMatrixTemp
-000067 9566      	lsr	rMatrixTemp
-000068 2b36      	or	rOutputB, rMatrixTemp
-000069 2b41      	or	rOutputC, rTemp2
+000068 8178      	ld	rMatrixTemp, Y
+000069 0f77      	lsl	rMatrixTemp
+00006a 0f77      	lsl	rMatrixTemp
+00006b 0f77      	lsl	rMatrixTemp
+00006c 0f77      	lsl	rMatrixTemp
+00006d 0f77      	lsl	rMatrixTemp
+00006e 0f77      	lsl	rMatrixTemp
+00006f 2b67      	or	rOutputD, rMatrixTemp
+000070 2b60      	or	rOutputD, rTemp
+000071 8178      	ld	rMatrixTemp, Y
+000072 9576      	lsr	rMatrixTemp
+000073 9576      	lsr	rMatrixTemp
+000074 2b47      	or	rOutputB, rMatrixTemp
+000075 2b51      	or	rOutputC, rTemp2
                  loop:
                  	// Light the display Leds with output
-00006a b935      	out	PORTB, rOutputB
-00006b b948      	out PORTC, rOutputC
-00006c b95b      	out	PORTD, rOutputD
+000076 b945      	out	PORTB, rOutputB
+000077 b958      	out PORTC, rOutputC
+000078 b96b      	out	PORTD, rOutputD
                  	// Wait for 100 loops
-00006d e684      	ldi rArg, 100
-00006e d011      	rcall wait
+000079 e09a      	ldi rArg, 10
+00007a d013      	rcall wait
                  	// Reset Output to turn off lights on display.
-00006f e030      	ldi	rOutputB, 0b00000000
-000070 e040      	ldi	rOutputC, 0b00000000
-000071 e050      	ldi	rOutputD, 0b00000000
-000072 b935      	out	PORTB, rOutputB
-000073 b948      	out PORTC, rOutputC
-000074 b95b      	out	PORTD, rOutputD
+00007b e040      	ldi	rOutputB, 0b00000000
+00007c e050      	ldi	rOutputC, 0b00000000
+00007d e060      	ldi	rOutputD, 0b00000000
+00007e b945      	out	PORTB, rOutputB
+00007f b958      	out PORTC, rOutputC
+000080 b96b      	out	PORTD, rOutputD
                  	// Wait for one loop
-000075 e081      	ldi	rArg, 1
-000076 d009      	rcall wait
+000081 e091      	ldi	rArg, 1
+000082 d00b      	rcall wait
                  	// Check if loop has gone through all the rows
-000077 30c0      	cpi	YL, LOW(matrix*2)
-000078 f2b9      	breq reset
+000083 30c0      	cpi	YL, LOW(matrix*2)
+000084 f411      	brne dontJump
+000085 940c 005b 	jmp GameLoop
+                 dontJump:
                  	// Subtract the iterator ( Y adress is the Matrix )
-000079 50c1      	subi YL, 1
+000087 50c1      	subi YL, 1
                  	// Check if D rows are being lit and if so plus it
-00007a 3004      	cpi	rTemp, 0b0000100
-00007b f6f8      	brsh plusD
+000088 3004      	cpi	rTemp, 0b0000100
+000089 f6e8      	brsh plusD
                  	// Check if 4 first rows are lit
-00007c 3018      	cpi	rTemp2, 0b0001000
-00007d f6d8      	brsh setDrow
+00008a 3018      	cpi	rTemp2, 0b0001000
+00008b f6c0      	brsh setDrow
                  	// Read Next Row
-00007e 940c 0056 	jmp plusC
+00008c 940c 0061 	jmp plusC
                  	// This is a waiting Subroutine, it takes one argument in rArg and it is the number of times it loops.
                  wait:
-000080 e070      	ldi	rWait, 0
+00008e e080      	ldi	rWait, 0
                  waitloop:
-000081 5f7f      	subi rWait, -1
-000082 1778      	cp	rWait, rArg
-000083 f7e9      	brne waitloop
+00008f 5f8f      	subi rWait, -1
+000090 1789      	cp	rWait, rArg
+000091 f7e9      	brne waitloop
                  	// ret Returns to caller from subroutine
 
 
@@ -1132,37 +1181,37 @@ counted separately from r26..r31 here.
 "ATmega328P" register use summary:
 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 r5 :   0 r6 :   0 r7 :   0 
 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 r13:   0 r14:   0 r15:   0 
-r16:   9 r17:  11 r18:   0 r19:   4 r20:   4 r21:   5 r22:  28 r23:   3 
-r24:   3 r25:   0 r26:   0 r27:   0 r28:   4 r29:   2 r30:   0 r31:   0 
+r16:  22 r17:   5 r18:   0 r19:   0 r20:   4 r21:   4 r22:   5 r23:  28 
+r24:   3 r25:   3 r26:   0 r27:   0 r28:   4 r29:   2 r30:   0 r31:   0 
 x  :   0 y  :  10 z  :   0 
 Registers used: 11 out of 35 (31.4%)
 
 "ATmega328P" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   0 add   :   0 adiw  :   0 and   :   0 
-andi  :   0 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
-brcc  :   0 brcs  :   0 break :   0 breq  :   1 brge  :   0 brhc  :   0 
+andi  :   1 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
+brcc  :   0 brcs  :   0 break :   0 breq  :   0 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
-brne  :   1 brpl  :   0 brsh  :   2 brtc  :   0 brts  :   0 brvc  :   0 
+brne  :   2 brpl  :   0 brsh  :   2 brtc  :   0 brts  :   0 brvc  :   0 
 brvs  :   0 bset  :   0 bst   :   0 call  :   0 cbi   :   0 cbr   :   0 
 clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   0 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   1 cpc   :   0 
 cpi   :   3 cpse  :   0 dec   :   0 eor   :   0 fmul  :   0 fmuls :   0 
-fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :   4 
-ld    :   2 ldd   :   0 ldi   :  27 lds   :   0 lpm   :   0 lsl   :   8 
+fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :   5 
+ld    :   2 ldd   :   0 ldi   :  29 lds   :   1 lpm   :   0 lsl   :   8 
 lsr   :   2 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
 neg   :   0 nop   :   0 or    :   4 ori   :   0 out   :  11 pop   :   0 
-push  :   0 rcall :   2 ret   :   1 reti  :   0 rjmp  :   0 rol   :   0 
+push  :   0 rcall :   2 ret   :   1 reti  :   0 rjmp  :   1 rol   :   0 
 ror   :   0 sbc   :   0 sbci  :   0 sbi   :   0 sbic  :   0 sbis  :   0 
 sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 seh   :   0 
 sei   :   0 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
-sez   :   0 sleep :   0 spm   :   0 st    :   8 std   :   0 sts   :   0 
+sez   :   0 sleep :   0 spm   :   0 st    :   8 std   :   0 sts   :   3 
 sub   :   0 subi  :   2 swap  :   0 tst   :   0 wdr   :   0 
-Instructions used: 16 out of 113 (14.2%)
+Instructions used: 19 out of 113 (16.8%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x00010a    166      0    166   32768   0.5%
+[.cseg] 0x000000 0x000126    194      0    194   32768   0.6%
 [.dseg] 0x000100 0x000122      0     34     34    2048   1.7%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 
