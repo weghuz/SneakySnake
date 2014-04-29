@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Fri Apr 25 14:26:51 2014
+AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue Apr 29 08:25:10 2014
 
 
 EQU  SIGNATURE_000 0000001e
@@ -694,19 +694,25 @@ EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
 DEF  rTemp        r16
-DEF  rDirection   r23
-DEF  rToRegister  r17
+DEF  rTemp2       r17
 DEF  rInitRegs    r18
-DEF  rRowCountC   r19
-DEF  rRowCountD   r20
+DEF  rOutputB     r19
+DEF  rOutputC     r20
+DEF  rOutputD     r21
+DEF  rMatrixTemp  r22
+DEF  rWait        r23
+DEF  rArg         r24
 EQU  NUM_COLUMNS  00000008
 EQU  MAX_LENGTH   00000019
 DSEG adress       00000100
 DSEG matrix       00000110
 DSEG snake        00000118
 CSEG init         00000034
-CSEG reset        00000042
-CSEG loop         0000004e
-CSEG plusD        00000046
-CSEG initD        00000049
-CSEG plusC        0000004d
+CSEG reset        00000054
+CSEG checkrow     00000060
+CSEG plusC        0000005a
+CSEG setDrow      0000005d
+CSEG plusD        0000005f
+CSEG loop         0000006e
+CSEG wait         00000084
+CSEG waitloop     00000085
