@@ -1,9 +1,5 @@
 
-<<<<<<< HEAD
-AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue Apr 29 10:13:33 2014
-=======
-AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue Apr 29 09:49:10 2014
->>>>>>> 649478164844f346df934117b5b0b7724dcdfb80
+AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue Apr 29 11:58:07 2014
 
 
 EQU  SIGNATURE_000 0000001e
@@ -697,13 +693,9 @@ EQU  ACIaddr      0000002e
 EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
-<<<<<<< HEAD
-DEF  rTempStatic  r15
-=======
 DEF  rZero        r0
 DEF  rSL          r9
 DEF  rDir         r10
->>>>>>> 649478164844f346df934117b5b0b7724dcdfb80
 DEF  rTemp        r16
 DEF  rTemp2       r17
 DEF  rTemp3       r18
@@ -720,30 +712,21 @@ DSEG adress       00000100
 DSEG matrix       00000110
 DSEG snake        00000118
 CSEG init         00000034
-<<<<<<< HEAD
-CSEG GameLoop     0000005b
-CSEG reset        0000005b
-CSEG checkrow     00000068
-CSEG plusC        00000061
-CSEG setDrow      00000064
-CSEG plusD        00000067
-CSEG loop         00000076
-CSEG wait         0000008e
-CSEG dontJump     00000087
-CSEG waitloop     0000008f
-=======
 CSEG InitializeSnake 00000034
-CSEG reset        00000060
-CSEG checkrow     0000006c
-CSEG plusC        00000066
-CSEG setDrow      00000069
-CSEG plusD        0000006b
-CSEG loop         0000007a
-CSEG wait         00000090
-CSEG waitloop     00000091
-CSEG SnakeMove    00000095
-CSEG MoveUp       000000a1
-CSEG MoveRight    000000a1
-CSEG MoveDown     000000a1
-CSEG MoveLeft     000000a1
->>>>>>> 649478164844f346df934117b5b0b7724dcdfb80
+CSEG GameLoop     00000064
+CSEG waitForAD1   00000071
+CSEG wait         000000cc
+CSEG waitForAD2   00000089
+CSEG reset        00000096
+CSEG checkrow     000000a3
+CSEG plusC        0000009c
+CSEG setDrow      0000009f
+CSEG plusD        000000a2
+CSEG loop         000000b4
+CSEG dontJump     000000c5
+CSEG waitloop     000000cd
+CSEG SnakeMove    000000d1
+CSEG MoveUp       000000dd
+CSEG MoveRight    000000dd
+CSEG MoveDown     000000dd
+CSEG MoveLeft     000000dd

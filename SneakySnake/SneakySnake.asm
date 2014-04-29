@@ -80,13 +80,6 @@ InitializeSnake: // Initierar Masken i minnet
 	sts ADMUX, rTemp
 	ldi rTemp, 0b10000111
 	sts ADCSRA, rTemp
-	// Load ADMUX to rTemp
-	lds rTemp, ADMUX
-	// 1<<2 = 0b00000100
-	andi rTemp, 1<<2
-	sts ADMUX, rTemp
-
-
 	// Initiera PORTB
 	ldi	rTemp, 0b11111111
 	out DDRB, rTemp
@@ -99,10 +92,6 @@ InitializeSnake: // Initierar Masken i minnet
 	// Sätt stackpekaren till högsta minnesadressen
 	ldi YH, HIGH( adress * 2)
 	ldi YL, LOW( adress * 2 )
-	
-	ldi r21, 0xaa
-	st Y, r21
-
 
 	ldi rTemp, HIGH(RAMEND)
 	out SPH, rTemp
@@ -110,36 +99,80 @@ InitializeSnake: // Initierar Masken i minnet
 	out SPL, rTemp
 // Här skall all spellogik vara
 GameLoop:
-	/*
 	// Initiera Matrisen i Minnet
 	ldi	YH, HIGH(matrix*2)
 	ldi	YL, LOW(matrix*2)
-	// Ladda in matrisens rader
-	ld	rTemp, Y
-	subi rTemp, -1
-	st	Y+, rTemp
-	ld	rTemp, Y
-	subi rTemp, -1
-	st	Y+, rTemp
-	ld	rTemp, Y
-	subi rTemp, -1
-	st	Y+, rTemp
-	ld	rTemp, Y
-	subi rTemp, -1
-	st	Y+, rTemp
-	ld	rTemp, Y
-	subi rTemp, -1
-	st	Y+, rTemp
-	ld	rTemp, Y
-	subi rTemp, -1
-	st	Y+, rTemp
-	ld	rTemp, Y
-	subi rTemp, -1
-	st	Y+, rTemp
-	ld	rTemp, Y
-	subi rTemp, -1
-	st	Y, rTemp
-	*/
+	
+	// Load ADMUX to rTemp
+	lds rTemp, ADMUX
+	// Clear ADMUX from input register get
+	andi rTemp, 0xF0
+	// 1<<2 = 0b00000100
+	// get Input from Y-axis
+	sbr rTemp, 1<<2
+	sts ADMUX, rTemp
+	// Start AD converting
+	lds rTemp, ADCSRA
+	sbr rTemp, 1<<6
+	sts ADCSRA, rTemp
+waitForAD1:
+	// Busy Wait loop
+	ldi rArg, 1
+	rcall wait
+	// sbrc = Skip if bit 6 in register is cleared
+	lds rTemp, ADCSRA
+	sbrc rTemp, 6
+	jmp waitForAD1
+
+	// Spara matrisens rad0
+	lds rMatrixTemp, ADCH
+	//lds rTemp, ADCL
+	st	Y+, rMatrixTemp
+
+	// Spara matrisens rad1
+	// ldi	rMatrixTemp, 0b00000000
+	st	Y+, rMatrixTemp
+	// Spara matrisens rad2
+	//ldi	rMatrixTemp, 0b00000000
+	st	Y+, rMatrixTemp
+	// Spara matrisens rad3
+	//ldi	rMatrixTemp, 0b00000000
+	st	Y+, rMatrixTemp	
+
+	// Load ADMUX to rTemp
+	lds rTemp, ADMUX
+	// Clear ADMUX from input register get
+	andi rTemp, 0xF0
+	// 1<<2 = 0b00000100
+	ori rTemp, 5
+	sts ADMUX, rTemp
+	
+	// Start AD converting
+	lds rTemp, ADCSRA
+	sbr rTemp, 1<<6
+	sts ADCSRA, rTemp
+waitForAD2:
+	// Busy Wait loop
+	ldi rArg, 1
+	rcall wait
+	// sbrc = Skip if bit 6 in register is cleared
+	lds rTemp, ADCSRA
+	sbrc rTemp, 6
+	jmp waitForAD2
+
+	// Spara matrisens rad4
+	lds rMatrixTemp, ADCH
+	st	Y+, rMatrixTemp
+	
+	// Spara matrisens rad5
+	//ldi	rMatrixTemp, 0b00000000
+	st	Y+, rMatrixTemp
+	// Spara matrisens rad6
+	//ldi	rMatrixTemp, 0b00000000
+	st	Y+, rMatrixTemp
+	// Spara matrisens rad7
+	//ldi	rMatrixTemp, 0b00000000
+	st	Y, rMatrixTemp
 	// Här börjar draw funktionen
 reset:
 	ldi	YH, HIGH(matrix*2)
@@ -157,6 +190,9 @@ setDrow:
 plusD:
 	lsl rTemp
 checkrow:
+	ldi rOutputD, 0
+	ldi rOutputC, 0
+	ldi rOutputB, 0
 	ld	rMatrixTemp, Y
 	lsl	rMatrixTemp
 	lsl	rMatrixTemp
@@ -177,7 +213,7 @@ loop:
 	out PORTC, rOutputC
 	out	PORTD, rOutputD
 	// Wait for 100 loops
-	ldi rArg, 10
+	ldi rArg, 255
 	rcall wait
 	// Reset Output to turn off lights on display.
 	ldi	rOutputB, 0b00000000
