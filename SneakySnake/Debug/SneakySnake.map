@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue Apr 29 09:49:10 2014
+AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue Apr 29 12:12:00 2014
 
 
 EQU  SIGNATURE_000 0000001e
@@ -698,7 +698,7 @@ DEF  rSL          r9
 DEF  rDir         r10
 DEF  rTemp        r16
 DEF  rTemp2       r17
-DEF  rInitRegs    r18
+DEF  rTemp3       r18
 DEF  rOutputB     r19
 DEF  rOutputC     r20
 DEF  rOutputD     r21
@@ -718,10 +718,15 @@ CSEG plusC        00000066
 CSEG setDrow      00000069
 CSEG plusD        0000006b
 CSEG loop         0000007a
-CSEG wait         00000090
-CSEG waitloop     00000091
-CSEG SnakeMove    00000095
-CSEG MoveUp       000000a1
-CSEG MoveRight    000000a1
-CSEG MoveDown     000000a1
-CSEG MoveLeft     000000a1
+CSEG wait         00000091
+CSEG SnakeToMatrixDisplay 000000c0
+CSEG waitloop     00000092
+CSEG SnakeMove    00000096
+CSEG MoveUp       000000a2
+CSEG MoveRight    000000ac
+CSEG MoveDown     000000ac
+CSEG MoveLeft     000000b6
+CSEG SnakeMoveLoopInit 000000b6
+CSEG SnakeMoveLoop 000000b9
+CSEG STMDLoop     000000c3
+CSEG BitSwitch    000000cf
