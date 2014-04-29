@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue Apr 29 12:12:00 2014
+AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue Apr 29 12:20:44 2014
 
 
 EQU  SIGNATURE_000 0000001e
@@ -696,6 +696,7 @@ EQU  INT_VECTORS_SIZE 00000034
 DEF  rZero        r0
 DEF  rSL          r9
 DEF  rDir         r10
+DEF  rTimerCount  r15
 DEF  rTemp        r16
 DEF  rTemp2       r17
 DEF  rTemp3       r18
@@ -711,22 +712,27 @@ DSEG adress       00000100
 DSEG matrix       00000110
 DSEG snake        00000118
 CSEG init         00000034
+CSEG timerCount   0000011e
 CSEG InitializeSnake 00000034
-CSEG reset        00000060
-CSEG checkrow     0000006c
-CSEG plusC        00000066
-CSEG setDrow      00000069
-CSEG plusD        0000006b
-CSEG loop         0000007a
-CSEG wait         00000091
-CSEG SnakeToMatrixDisplay 000000c0
-CSEG waitloop     00000092
-CSEG SnakeMove    00000096
-CSEG MoveUp       000000a2
-CSEG MoveRight    000000ac
-CSEG MoveDown     000000ac
-CSEG MoveLeft     000000b6
-CSEG SnakeMoveLoopInit 000000b6
-CSEG SnakeMoveLoop 000000b9
-CSEG STMDLoop     000000c3
-CSEG BitSwitch    000000cf
+CSEG GameLoop     0000006b
+CSEG waitForAD1   00000078
+CSEG wait         000000d4
+CSEG waitForAD2   00000090
+CSEG reset        0000009d
+CSEG checkrow     000000aa
+CSEG plusC        000000a3
+CSEG setDrow      000000a6
+CSEG plusD        000000a9
+CSEG loop         000000bb
+CSEG SnakeToMatrixDisplay 00000103
+CSEG dontJump     000000cd
+CSEG waitloop     000000d5
+CSEG SnakeMove    000000d9
+CSEG MoveUp       000000e5
+CSEG MoveRight    000000ef
+CSEG MoveDown     000000ef
+CSEG MoveLeft     000000f9
+CSEG SnakeMoveLoopInit 000000f9
+CSEG SnakeMoveLoop 000000fc
+CSEG STMDLoop     00000106
+CSEG BitSwitch    00000112
