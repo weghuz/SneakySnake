@@ -8,20 +8,16 @@
 .DEF rZero			= r0
 .DEF rSL			= r9 // SL = SnakeLength, current snake length
 .DEF rDir			= r10
-
 .DEF rTimerCount	= r15
 .DEF rTemp			= r16
 .DEF rTemp2			= r17
-
 .DEF rTemp3			= r18
-.DEF rInitRegs		= r19
-.DEF rOutputB		= r20
-.DEF rOutputC		= r21
-.DEF rOutputD		= r22
-.DEF rMatrixTemp	= r23
-.DEF rWait			= r24
-.DEF rArg			= r25
-
+.DEF rOutputB		= r19
+.DEF rOutputC		= r20
+.DEF rOutputD		= r21
+.DEF rMatrixTemp	= r22
+.DEF rWait			= r23
+.DEF rArg			= r24
 
 .EQU NUM_COLUMNS   = 8
 
@@ -46,13 +42,13 @@ InitializeSnake: // Initierar Masken i minnet
 	ldi	YL, LOW(snake*2)
 
 	// Sätter
+	ldi	rMatrixTemp, 0b00010100
+	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0b00100100
 	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0b00110100
 	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0b01000100
-	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0b01010100
 	st	Y, rMatrixTemp
 
 	// Laddar in värdet 4 till rSL; rSL = 4
@@ -96,7 +92,8 @@ InitializeSnake: // Initierar Masken i minnet
 	out DDRD, rTemp
 
 	//timer ska paceras någon anna stans
-	ldi rTimerCount, 0
+	mov rTemp, rZero
+
 	ldi rTemp, (1<<CS02) | (1<<CS00)
 	out TCCR0B, rTemp
 	sei
@@ -229,6 +226,7 @@ loop:
 	// Wait for 100 loops
 	ldi rArg, 255
 	rcall wait
+	rcall SnakeToMatrixDisplay
 	// Reset Output to turn off lights on display.
 	ldi	rOutputB, 0b00000000
 	ldi	rOutputC, 0b00000000
@@ -265,9 +263,11 @@ waitloop:
 ret
 
 
-
-
 SnakeMove:
+
+	// rTemp = Kordinaterna för Huvudet
+	// rTemp2 = Riktningen
+
 	ldi	YH, HIGH(snake*2)
 	ldi	YL, LOW(snake*2)
 
@@ -285,19 +285,111 @@ SnakeMove:
 	breq MoveLeft
 
 MoveUp:
+	ldi rTemp2, 0b11110000
+	and rTemp2, rTemp	
 
+	ldi rTemp3, 0b00001111
+	and rTemp3, rTemp	
+		
+	subi rTemp3, -1			// rTemp2++
+
+	cpi rTemp3, 7			// if ( rTemp2 != 8 ) -> Continue
+	brne SnakeMoveLoopInit					
+	ldi rTemp3, 0			// rTemp2 = 0
+	jmp SnakeMoveLoopInit
 
 MoveRight:
 
 
-MoveDown:
 
+MoveDown:
+	ldi rTemp2, 0b11110000
+	and rTemp2, rTemp	
+
+	ldi rTemp3, 0b00001111
+	and rTemp3, rTemp	
+
+	subi rTemp3, 1			// rTemp2--
+
+	cpi rTemp3, 255				// if ( rTemp2 != 255 ) -> Continue
+	brne SnakeMoveLoopInit					
+	ldi rTemp3, 0b0000111			// rTemp2 = 8
+	jmp SnakeMoveLoopInit
 
 MoveLeft:
 
+// Loopa igenom alla kroppsdelar
+SnakeMoveLoopInit:
+	// rTemp	= Gammla ormens position 
+	// rTemp2	= Nya Positionen för ormens kroppsdel
+	// rTemp3	= Räknare
+	add rTemp2, rTemp3
+	mov rTemp3, rSL
+	st Y, rTemp2			// Sparar ner den nya positionen för Ormens huvud.
+
+SnakeMoveLoop:
+	
+	ld	rTemp, Y
+	st Y+, rTemp2
+	mov rTemp2, rTemp
+
+	subi rTemp3, 1
+	cpi rTemp3, 0
+	brne SnakeMoveLoop
+ret
+
+
+SnakeToMatrixDisplay:
+	// Y = Snake
+	// X = MatrixDisplayen
+	// rMatrixTemp = Y - Räknare
+	ldi	YH, HIGH(snake*2)
+	ldi	YL, LOW(snake*2)
+
+	ldi rMatrixTemp, 0
+
+STMDLoop:
+	ldi	XH, HIGH(matrix*2)
+	ldi	XL, LOW(matrix*2)
+
+	// rTemp	= Vilken Kolum
+	// rTemp2	= Vilkem Rad
+	// rTemp3	= Räknare
+
+	ld	rTemp, Y
+	ldi rTemp2, 0b00001111
+	and rTemp2, rTemp
+	lsr rTemp
+	lsr rTemp
+	lsr rTemp
+	lsr rTemp
+
+	add XL, rTemp2
+
+	
+	mov rTemp3, rTemp
+	ldi rTemp, 0b00000001
+BitSwitch:
+	subi rTemp3, 1
+	lsl rTemp2
+	cpi rTemp3, 0
+brne BitSwitch
+	// rTemp ska nu plussar/or med MatrisDisplayen
+
+	ld	rTemp, X
+	or rTemp2, rTemp
+	st X, rTemp
+	subi rMatrixTemp, -1	// rMatrixTemp++
+	subi YL, -1
+	cp rMatrixTemp, rSL
+brne STMDLoop
+ret
 
 
 	// Loopa igenom alla kroppsdelar
 timerCount:
-	subi rTimerCount, -1
+	mov rTemp, rTimerCount
+	subi rTemp, -1
+	mov rTimerCount, rTemp
 	reti
+
