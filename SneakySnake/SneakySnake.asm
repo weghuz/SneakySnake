@@ -42,13 +42,13 @@ InitializeSnake: // Initierar Masken i minnet
 	ldi	YL, LOW(snake*2)
 
 	// Sätter
-	ldi	rMatrixTemp, 0x11
+	ldi	rMatrixTemp, 0x34
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x12
+	ldi	rMatrixTemp, 0x33
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x13
+	ldi	rMatrixTemp, 0x43
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x14
+	ldi	rMatrixTemp, 0x53
 	st	Y, rMatrixTemp
 
 	// Laddar in värdet 4 till rSL; rSL = 4
@@ -61,13 +61,13 @@ InitializeSnake: // Initierar Masken i minnet
 	// Ladda in matrisens rader
 	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0b00011110
+	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0b00010000
+	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0b00010000
+	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0b00110000
+	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
@@ -140,6 +140,9 @@ GameLoop:
 	ldi	rMatrixTemp, 0b11000101
 	st	Y, rMatrixTemp
 	// Här börjar draw funktionen
+
+
+
 reset:
 	ldi	YH, HIGH(matrix*2)
 	ldi	YL, LOW((matrix*2))
@@ -203,6 +206,7 @@ loop:
 	// Wait for one loop
 	ldi	rArg, 1
 	rcall wait
+	rcall SnakeToMatrixDisplay
 	// Check if loop has gone through all the rows
 	cpi	YL, LOW(matrix*2+7)
 	brne dontJump
@@ -303,53 +307,85 @@ SnakeMoveLoop:
 	cpi rTemp3, 0
 	brne SnakeMoveLoop
 ret
+*/
 
+ClearDisplayMatrix:
+	ldi	YH, HIGH(matrix*2)
+	ldi	YL, LOW(matrix*2)
+	// Ladda in matrisens rader
+	ldi	rMatrixTemp, 0b00000000
+	st	Y+, rMatrixTemp
+	ldi	rMatrixTemp, 0b00000000
+	st	Y+, rMatrixTemp
+	ldi	rMatrixTemp, 0b00000000
+	st	Y+, rMatrixTemp
+	ldi	rMatrixTemp, 0b00000000
+	st	Y+, rMatrixTemp
+	ldi	rMatrixTemp, 0b00000000
+	st	Y+, rMatrixTemp
+	ldi	rMatrixTemp, 0b00000000
+	st	Y+, rMatrixTemp
+	ldi	rMatrixTemp, 0b00000000
+	st	Y+, rMatrixTemp
+	ldi	rMatrixTemp, 0b00000000
+	st	Y, rMatrixTemp
+ret
 
 SnakeToMatrixDisplay:
-	// Y = Snake
-	// X = MatrixDisplayen
-	// rMatrixTemp = Y - Räknare
-	ldi	YH, HIGH(snake*2)
-	ldi	YL, LOW(snake*2)
+
+	rcall ClearDisplayMatrix
+
+	// Y = MatrixDisplayen
+	// X = Snake
+	// rMatrixTemp = Räknare
+	ldi	XH, HIGH(snake*2)
+	ldi	XL, LOW(snake*2)
 
 	ldi rMatrixTemp, 0
 
 STMDLoop:
-	ldi	XH, HIGH(matrix*2)
-	ldi	XL, LOW(matrix*2)
+	ldi	YH, HIGH(matrix*2)
+	ldi	YL, LOW(matrix*2)
 
 	// rTemp	= Vilken Kolum
 	// rTemp2	= Vilkem Rad
 	// rTemp3	= Räknare
 
-	ld	rTemp, Y
-	ldi rTemp2, 0b00001111
-	and rTemp2, rTemp
-	lsr rTemp
-	lsr rTemp
+	ld	rTemp, X				// Hämtar Ormens koordinater
+	ldi rTemp2, 0b00001111		
+	and rTemp2, rTemp			// Tar ut Ormens Y koordinat
+	// Bit-Switchar 4 till höger för att få Ormens X koordinat
+	lsr rTemp					
+	lsr rTemp				
 	lsr rTemp
 	lsr rTemp
 
-	add XL, rTemp2
+	// rTemp = 
+
+	add YL, rTemp2	// Plussar på DisplayMatrixen med Y-koordVärdet.
 
 	
 	mov rTemp3, rTemp
 	ldi rTemp, 0b00000001
 BitSwitch:
 	subi rTemp3, 1
-	lsl rTemp2
+	lsl rTemp
 	cpi rTemp3, 0
 brne BitSwitch
+
 	// rTemp ska nu plussar/or med MatrisDisplayen
-	ld	rTemp, X
+	ld	rTemp2, Y
 	or rTemp2, rTemp
-	st X, rTemp
+	st Y, rTemp2
+
+	// 2 RÄknare som plussas på
 	subi rMatrixTemp, -1	// rMatrixTemp++
-	subi YL, -1
+	subi XL, -1
+
 	cp rMatrixTemp, rSL
 brne STMDLoop
 ret // Loopa igenom alla kroppsdelar
-*/
+
 timerCount:
 	mov rTemp, rTimerCount
 	subi rTemp, -1
