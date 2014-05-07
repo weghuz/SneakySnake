@@ -63,11 +63,11 @@ InitializeSnake: // Initierar Masken i minnet
 	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0b00000000
+	ldi	rMatrixTemp, 0b00010000
 	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0b00000000
+	ldi	rMatrixTemp, 0b00010000
 	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
@@ -114,7 +114,7 @@ GameLoop:
 	ldi	YL, LOW(matrix*2)
 
 	// Get input from X-axis
-
+/*
 	// Spara matrisens rad0
 	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
@@ -140,7 +140,7 @@ GameLoop:
 	ldi	rMatrixTemp, 0b11000101
 	st	Y, rMatrixTemp
 	// Här börjar draw funktionen
-
+	*/
 
 
 reset:
@@ -315,11 +315,11 @@ ClearDisplayMatrix:
 	// Ladda in matrisens rader
 	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0b00000000
+	ldi	rMatrixTemp, 0b00010000
 	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0b00000000
+	ldi	rMatrixTemp, 0b00000100
 	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp

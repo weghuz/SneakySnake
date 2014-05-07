@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Wed Apr 30 12:23:33 2014
+AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Mon May 05 19:25:32 2014
 
 
 EQU  SIGNATURE_000 0000001e
@@ -712,22 +712,22 @@ DSEG adress       00000100
 DSEG matrix       00000110
 DSEG snake        00000118
 CSEG init         00000034
-CSEG timerCount   000000f0
+CSEG timerCount   000000e0
 CSEG InitializeSnake 00000034
 CSEG GameLoop     0000006b
-CSEG reset        0000007d
-CSEG checkrow     0000008a
-CSEG plusC        00000083
-CSEG setDrow      00000086
-CSEG plusD        00000089
-CSEG invertBits   000000f4
-CSEG loop         000000a3
-CSEG wait         000000bc
-CSEG SnakeToMatrixDisplay 000000d4
-CSEG dontJump     000000b5
-CSEG waitloop     000000bd
-CSEG ClearDisplayMatrix 000000c1
-CSEG STMDLoop     000000d8
-CSEG BitSwitch    000000e4
-CSEG getInput     00000106
-CSEG waitForAD    00000112
+CSEG reset        0000006d
+CSEG checkrow     0000007a
+CSEG plusC        00000073
+CSEG setDrow      00000076
+CSEG plusD        00000079
+CSEG invertBits   000000e4
+CSEG loop         00000093
+CSEG wait         000000ac
+CSEG SnakeToMatrixDisplay 000000c4
+CSEG dontJump     000000a5
+CSEG waitloop     000000ad
+CSEG ClearDisplayMatrix 000000b1
+CSEG STMDLoop     000000c8
+CSEG BitSwitch    000000d4
+CSEG getInput     000000f6
+CSEG waitForAD    00000102
