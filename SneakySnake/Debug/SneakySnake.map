@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Mon May 05 19:25:32 2014
+AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Wed May 07 12:58:17 2014
 
 
 EQU  SIGNATURE_000 0000001e
@@ -712,22 +712,34 @@ DSEG adress       00000100
 DSEG matrix       00000110
 DSEG snake        00000118
 CSEG init         00000034
-CSEG timerCount   000000e0
+CSEG timerCount   00000115
 CSEG InitializeSnake 00000034
-CSEG GameLoop     0000006b
-CSEG reset        0000006d
-CSEG checkrow     0000007a
-CSEG plusC        00000073
-CSEG setDrow      00000076
-CSEG plusD        00000079
-CSEG invertBits   000000e4
-CSEG loop         00000093
-CSEG wait         000000ac
-CSEG SnakeToMatrixDisplay 000000c4
-CSEG dontJump     000000a5
-CSEG waitloop     000000ad
-CSEG ClearDisplayMatrix 000000b1
-CSEG STMDLoop     000000c8
-CSEG BitSwitch    000000d4
-CSEG getInput     000000f6
-CSEG waitForAD    00000102
+CSEG GameLoop     00000066
+CSEG SnakeToMatrixDisplay 000000e8
+CSEG getInputX    0000012b
+CSEG getInputY    00000148
+CSEG reset        0000007b
+CSEG DrawRow      00000088
+CSEG plusC        00000081
+CSEG setDrow      00000084
+CSEG plusD        00000087
+CSEG invertBits   00000119
+CSEG wait         000000b9
+CSEG dontJump     000000b2
+CSEG waitloop     000000ba
+CSEG SnakeMove    000000be
+CSEG MoveUp       000000ca
+CSEG MoveRight    000000d4
+CSEG MoveDown     000000d4
+CSEG MoveLeft     000000de
+CSEG SnakeMoveLoopInit 000000de
+CSEG SnakeMoveLoop 000000e1
+CSEG STMDLoop     000000fd
+CSEG initBitSwitch 0000010b
+CSEG BitSwitch    00000109
+CSEG waitForAD1   00000136
+CSEG setLeft      00000142
+CSEG setRight     00000145
+CSEG waitForAD2   00000153
+CSEG setUp        0000015f
+CSEG setDown      00000162
