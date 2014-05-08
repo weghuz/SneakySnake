@@ -38,17 +38,17 @@ snake:    .BYTE MAX_LENGTH+1
 init:
 
 InitializeSnake: // Initierar Masken i minnet
-	ldi	YH, HIGH(snake*2)
-	ldi	YL, LOW(snake*2)
+	ldi	YH, HIGH(snake)
+	ldi	YL, LOW(snake)
 
 	// Sätter
-	ldi	rMatrixTemp, 0x34
+	ldi	rMatrixTemp, 0x01
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x33
+	ldi	rMatrixTemp, 0x02
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x43
+	ldi	rMatrixTemp, 0x03
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x53
+	ldi	rMatrixTemp, 0x04
 	st	Y, rMatrixTemp
 
 	// Laddar in värdet 4 till rSL; rSL = 4
@@ -56,8 +56,8 @@ InitializeSnake: // Initierar Masken i minnet
 	MOV rSL, rTemp
 
 	// Initiera Matrisen i Minnet
-	ldi	YH, HIGH(matrix*2)
-	ldi	YL, LOW(matrix*2)
+	ldi	YH, HIGH(matrix)
+	ldi	YL, LOW(matrix)
 	// Ladda in matrisens rader
 	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
@@ -110,11 +110,14 @@ InitializeSnake: // Initierar Masken i minnet
 // Här skall all spellogik vara
 GameLoop:
 	// Initiera Matrisen i Minnet
-	ldi	YH, HIGH(matrix*2)
-	ldi	YL, LOW(matrix*2)
+
+	rcall SnakeMove
+
+	ldi	YH, HIGH(matrix)
+	ldi	YL, LOW(matrix)
 
 	// Get input from X-axis
-
+	
 	// Spara matrisens rad0
 	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
@@ -144,8 +147,8 @@ GameLoop:
 
 
 reset:
-	ldi	YH, HIGH(matrix*2)
-	ldi	YL, LOW((matrix*2))
+	ldi	YH, HIGH(matrix)
+	ldi	YL, LOW((matrix))
 	ldi	rTemp2, 0b00000001
 	ldi	rTemp, 0b00000000
 	jmp checkrow
@@ -206,9 +209,8 @@ loop:
 	// Wait for one loop
 	ldi	rArg, 1
 	rcall wait
-	rcall SnakeToMatrixDisplay
 	// Check if loop has gone through all the rows
-	cpi	YL, LOW(matrix*2+7)
+	cpi	YL, LOW(matrix+7)
 	brne dontJump
 	jmp GameLoop
 dontJump:
@@ -232,14 +234,17 @@ waitloop:
 	// ret Returns to caller from subroutine
 ret
 
-/*
+
 SnakeMove:
 
 	// rTemp = Kordinaterna för Huvudet
 	// rTemp2 = Riktningen
 
-	ldi	YH, HIGH(snake*2)
-	ldi	YL, LOW(snake*2)
+	ldi rTemp, 3
+	mov rDir, rTemp
+
+ 	ldi	YH, HIGH(snake)
+	ldi	YL, LOW(snake)
 
 	// Hämta första huvudet o flytta den till den riktningen som joysticen riktar mot
 	ld	rTemp, Y 					// Hämta värdet(Koordinaterna)
@@ -255,47 +260,115 @@ SnakeMove:
 	breq MoveLeft
 
 MoveUp:
+	
+	// rTemp2 = X-Position
+	// rTemp3 = Y-Position
+
 	ldi rTemp2, 0b11110000
 	and rTemp2, rTemp	
 
 	ldi rTemp3, 0b00001111
 	and rTemp3, rTemp	
-		
+
 	subi rTemp3, -1			// rTemp2++
 
-	cpi rTemp3, 7			// if ( rTemp2 != 8 ) -> Continue
+	// Check if the row is 8(Outside the display), change the value to 0
+	// if ( rTemp3 == 8 ) -> rTemp3 = 0; 
+	// else -> Continue
+	cpi rTemp3, 8			
 	brne SnakeMoveLoopInit					
-	ldi rTemp3, 0			// rTemp2 = 0
+	ldi rTemp3, 0			
 	jmp SnakeMoveLoopInit
 
 MoveRight:
 
+	// rTemp2 = X-Position
+	// rTemp3 = Y-Position
 
+	ldi rTemp3, 0b00001111
+	and rTemp3, rTemp	
+
+	mov rTemp2, rTemp
+
+	lsr rTemp2
+	lsr rTemp2
+	lsr rTemp2
+	lsr rTemp2
+
+	
+	subi rTemp2, 1
+
+	// Check if the row is 8(Outside the display), change the value to 0
+	// if ( rTemp3 == 255/-1 ) -> rTemp3 = 7; 
+	// else -> Continue
+	cpi rTemp2, 0b11111111			// if ( rTemp2 != 8 ) -> Continue
+	brne SnakeMoveLoopInitBitSwitch					
+	ldi rTemp2, 7			// rTemp2 = 0
+	jmp SnakeMoveLoopInitBitSwitch
+	
 
 MoveDown:
+
+	// rTemp2 = X-Position
+	// rTemp3 = Y-Position
+
 	ldi rTemp2, 0b11110000
 	and rTemp2, rTemp	
 
 	ldi rTemp3, 0b00001111
 	and rTemp3, rTemp	
 
-	subi rTemp3, 1			// rTemp2--
+	subi rTemp3, 1		
 
-	cpi rTemp3, 255				// if ( rTemp2 != 255 ) -> Continue
+	// Check if the row is 8(Outside the display), change the value to 0
+	// if ( rTemp3 == 255/-1 ) -> rTemp3 = 7; 
+	// else -> Continue
+	cpi rTemp3, 0b11111111				// if ( rTemp3 != 255/-1 ) -> Continue
 	brne SnakeMoveLoopInit					
-	ldi rTemp3, 0b0000111			// rTemp2 = 8
+	ldi rTemp3, 7			// rTemp3 = 7
 	jmp SnakeMoveLoopInit
 
 MoveLeft:
 
+	// rTemp2 = X-Position
+	// rTemp3 = Y-Position
+
+	ldi rTemp3, 0b00001111
+	and rTemp3, rTemp	
+
+	mov rTemp2, rTemp
+
+	lsr rTemp2
+	lsr rTemp2
+	lsr rTemp2
+	lsr rTemp2
+
+	subi rTemp2, -1
+
+	cpi rTemp2, 8				// if ( rTemp2 != 255 ) -> Continue
+	brne SnakeMoveLoopInitBitSwitch					
+	ldi rTemp2, 0			// rTemp2 = 8
+	jmp SnakeMoveLoopInitBitSwitch
+
 // Loopa igenom alla kroppsdelar
+
+SnakeMoveLoopInitBitSwitch:
+
+	// Switch back rTemp2 to Right Position( X-Postion )
+	lsl rTemp2
+	lsl rTemp2
+	lsl rTemp2
+	lsl rTemp2
+
 SnakeMoveLoopInit:
 	// rTemp	= Gammla ormens position 
 	// rTemp2	= Nya Positionen för ormens kroppsdel
 	// rTemp3	= Räknare
 	add rTemp2, rTemp3
 	mov rTemp3, rSL
-	st Y, rTemp2			// Sparar ner den nya positionen för Ormens huvud.
+
+	st Y+, rTemp2			// Sparar ner den nya positionen för Ormens huvud.
+	mov rTemp2, rTemp
 
 SnakeMoveLoop:
 	
@@ -304,14 +377,15 @@ SnakeMoveLoop:
 	mov rTemp2, rTemp
 
 	subi rTemp3, 1
-	cpi rTemp3, 0
+	cpi rTemp3, 1
 	brne SnakeMoveLoop
 ret
-*/
+
 
 ClearDisplayMatrix:
-	ldi	YH, HIGH(matrix*2)
-	ldi	YL, LOW(matrix*2)
+	ldi	YH, HIGH(matrix)
+	ldi	YL, LOW(matrix)
+
 	// Ladda in matrisens rader
 	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
@@ -338,14 +412,14 @@ SnakeToMatrixDisplay:
 	// Y = MatrixDisplayen
 	// X = Snake
 	// rMatrixTemp = Räknare
-	ldi	XH, HIGH(snake*2)
-	ldi	XL, LOW(snake*2)
+	ldi	XH, HIGH(snake)
+	ldi	XL, LOW(snake)
 
 	ldi rMatrixTemp, 0
 
 STMDLoop:
-	ldi	YH, HIGH(matrix*2)
-	ldi	YL, LOW(matrix*2)
+	ldi	YH, HIGH(matrix)
+	ldi	YL, LOW(matrix)
 
 	// rTemp	= Vilken Kolum
 	// rTemp2	= Vilkem Rad
