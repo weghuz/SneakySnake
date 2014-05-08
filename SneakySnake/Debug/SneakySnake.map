@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Thu May 08 11:39:56 2014
+AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Thu May 08 12:57:18 2014
 
 
 EQU  SIGNATURE_000 0000001e
@@ -704,7 +704,7 @@ DEF  rOutputB     r19
 DEF  rOutputC     r20
 DEF  rOutputD     r21
 DEF  rMatrixTemp  r22
-DEF  rWait        r23
+DEF  rInterruptTemp r23
 DEF  rArg         r24
 EQU  NUM_COLUMNS  00000008
 EQU  MAX_LENGTH   00000019
@@ -712,35 +712,34 @@ DSEG adress       00000100
 DSEG matrix       00000110
 DSEG snake        00000118
 CSEG init         00000034
-CSEG timerCount   00000137
-CSEG InitializeSnake 00000034
-CSEG GameLoop     00000066
-CSEG SnakeToMatrixDisplay 0000010a
-CSEG getInputX    0000014d
-CSEG getInputY    0000016a
-CSEG SnakeMove    000000bf
-CSEG reset        0000007c
-CSEG DrawRow      00000089
-CSEG plusC        00000082
-CSEG setDrow      00000085
-CSEG plusD        00000088
-CSEG invertBits   0000013b
-CSEG wait         000000ba
-CSEG dontJump     000000b3
-CSEG waitloop     000000bb
-CSEG MoveUp       000000cd
-CSEG MoveRight    000000d7
-CSEG MoveDown     000000e4
-CSEG MoveLeft     000000ee
-CSEG SnakeMoveLoopInit 000000ff
-CSEG SnakeMoveLoopInitBitSwitch 000000fb
-CSEG SnakeMoveLoop 00000103
-CSEG STMDLoop     0000011f
-CSEG initBitSwitch 0000012d
-CSEG BitSwitch    0000012b
-CSEG waitForAD1   00000158
-CSEG setLeft      00000164
-CSEG setRight     00000167
-CSEG waitForAD2   00000175
-CSEG setUp        00000181
-CSEG setDown      00000184
+CSEG GameLoop     0000006f
+CSEG getInputX    00000139
+CSEG getInputY    00000156
+CSEG SnakeMove    000000b4
+CSEG SnakeToMatrixDisplay 000000fd
+CSEG reset        00000076
+CSEG DrawRow      00000083
+CSEG plusC        0000007c
+CSEG setDrow      0000007f
+CSEG plusD        00000082
+CSEG invertBits   00000127
+CSEG wait         000000af
+CSEG dontJump     000000a8
+CSEG waitloop     000000b0
+CSEG MoveUp       000000c0
+CSEG MoveRight    000000ca
+CSEG MoveDown     000000d7
+CSEG MoveLeft     000000e1
+CSEG SnakeMoveLoopInit 000000f2
+CSEG returnX      000000ee
+CSEG SnakeMoveLoop 000000f6
+CSEG STMDLoop     0000010b
+CSEG initBitSwitch 00000119
+CSEG BitSwitch    00000117
+CSEG timerCount   00000123
+CSEG waitForAD1   00000144
+CSEG setLeft      00000150
+CSEG setRight     00000153
+CSEG waitForAD2   00000161
+CSEG setUp        0000016d
+CSEG setDown      00000170
