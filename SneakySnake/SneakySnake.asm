@@ -38,17 +38,21 @@ snake:    .BYTE MAX_LENGTH+1
 init:
 
 InitializeSnake: // Initierar Masken i minnet
-	ldi	YH, HIGH(snake)
-	ldi	YL, LOW(snake)
 
-	// Sätter
+	ldi	YH, HIGH(snake*2)
+	ldi	YL, LOW(snake*2)
+	
+	// Sätter ormens riktning
+	ldi rTemp, 0
+	mov rDir, rTemp
+	// Sätter ormens position
+	ldi	rMatrixTemp, 0x00
+	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0x01
 	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0x02
 	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0x03
-	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x04
 	st	Y, rMatrixTemp
 
 	// Laddar in värdet 4 till rSL; rSL = 4
@@ -91,6 +95,7 @@ InitializeSnake: // Initierar Masken i minnet
 	out DDRD, rTemp
 
 	//timer ska paceras någon anna stans
+	/*
 	mov rTemp, rZero
 
 	ldi rTemp, (1<<CS02) | (1<<CS00)
@@ -98,6 +103,7 @@ InitializeSnake: // Initierar Masken i minnet
 	sei
 	ldi rTemp, 0b00000001
 	sts TIMSK0,rTemp
+	*/
 
 	// Sätt stackpekaren till högsta minnesadressen
 	ldi YH, HIGH( adress * 2)
@@ -109,6 +115,10 @@ InitializeSnake: // Initierar Masken i minnet
 	out SPL, rTemp
 // Här skall all spellogik vara
 GameLoop:
+	rcall SnakeToMatrixDisplay
+	rcall getInputX
+	rcall getInputY
+
 	// Initiera Matrisen i Minnet
 
 	rcall SnakeMove
@@ -117,9 +127,8 @@ GameLoop:
 	ldi	YL, LOW(matrix)
 
 	// Get input from X-axis
-	
 	// Spara matrisens rad0
-	ldi	rMatrixTemp, 0b00000000
+	mov	rMatrixTemp, rDir
 	st	Y+, rMatrixTemp
 	// Spara matrisens rad1
 	ldi	rMatrixTemp, 0b00000000
@@ -140,28 +149,27 @@ GameLoop:
 	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
 	// Spara matrisens rad7
-	ldi	rMatrixTemp, 0b11000101
+	ldi	rMatrixTemp, 0b00000000
 	st	Y, rMatrixTemp
+
+
 	// Här börjar draw funktionen
-
-
-
 reset:
 	ldi	YH, HIGH(matrix)
 	ldi	YL, LOW((matrix))
 	ldi	rTemp2, 0b00000001
 	ldi	rTemp, 0b00000000
-	jmp checkrow
+	jmp DrawRow
 plusC:
 	lsl	rTemp2
-	jmp checkrow
+	jmp DrawRow
 setDrow:
 	ldi	rTemp2, 0b00000000
 	ldi	rTemp, 0b00000100
-	rjmp checkrow
+	rjmp DrawRow
 plusD:
 	lsl rTemp
-checkrow:
+DrawRow:
 	ldi rOutputD, 0
 	ldi rOutputC, 0
 	ldi rOutputB, 0
@@ -191,7 +199,7 @@ checkrow:
 	lsr	rMatrixTemp
 	or	rOutputB, rMatrixTemp
 	or	rOutputC, rTemp2
-loop:
+
 	// Light the display Leds with output
 	out	PORTB, rOutputB
 	out PORTC, rOutputC
@@ -382,9 +390,11 @@ SnakeMoveLoop:
 ret
 
 
-ClearDisplayMatrix:
-	ldi	YH, HIGH(matrix)
-	ldi	YL, LOW(matrix)
+SnakeToMatrixDisplay:
+	
+	// clear Display
+	ldi	YH, HIGH(matrix*2)
+	ldi	YL, LOW(matrix*2)
 
 	// Ladda in matrisens rader
 	ldi	rMatrixTemp, 0b00000000
@@ -403,11 +413,6 @@ ClearDisplayMatrix:
 	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0b00000000
 	st	Y, rMatrixTemp
-ret
-
-SnakeToMatrixDisplay:
-
-	rcall ClearDisplayMatrix
 
 	// Y = MatrixDisplayen
 	// X = Snake
@@ -424,32 +429,35 @@ STMDLoop:
 	// rTemp	= Vilken Kolum
 	// rTemp2	= Vilkem Rad
 	// rTemp3	= Räknare
+	
+	// rTemp = X position
+	ld	rTemp, X	// Hämtar Ormens koordinater
 
-	ld	rTemp, X				// Hämtar Ormens koordinater
-	ldi rTemp2, 0b00001111		
-	and rTemp2, rTemp			// Tar ut Ormens Y koordinat
+	// rTemp2 = Y position
+	ldi rTemp2, 0b00001111
+	and rTemp2, rTemp	// Tar ut Ormens Y koordinat
+	
 	// Bit-Switchar 4 till höger för att få Ormens X koordinat
 	lsr rTemp					
-	lsr rTemp				
 	lsr rTemp
 	lsr rTemp
-
-	// rTemp = 
+	lsr rTemp
 
 	add YL, rTemp2	// Plussar på DisplayMatrixen med Y-koordVärdet.
-
 	
-	mov rTemp3, rTemp
-	ldi rTemp, 0b00000001
-BitSwitch:
-	subi rTemp3, 1
-	lsl rTemp
-	cpi rTemp3, 0
-brne BitSwitch
+	ldi rTemp3, 0b10000000
 
-	// rTemp ska nu plussar/or med MatrisDisplayen
+	rjmp initBitSwitch
+BitSwitch:
+	subi rTemp, 1
+	lsr rTemp3
+initBitSwitch:
+	cpi rTemp, 0
+brne BitSwitch
+	
+	// rTemp ska nu plussa/or med MatrisDisplayen
 	ld	rTemp2, Y
-	or rTemp2, rTemp
+	or rTemp2, rTemp3
 	st Y, rTemp2
 
 	// 2 RÄknare som plussas på
@@ -486,34 +494,86 @@ invertBits:
 	bld rArg, 0
 ret
 
-getInput:
+getInputX:
 	// Load ADMUX to rTemp
 	lds rTemp, ADMUX
 	// Clear ADMUX from input register get
 	andi rTemp, 0xF0
-	// get Input from rArg, send in 4 for X-axis and 5 for Y-axis
-	or  rTemp, rArg
-	// reset rArg (Argument to subroutine) for next call
-	ldi rArg, 0
+	// get Input from X Position
+	ori  rTemp, 5
+	// Set ADMUX register to get input from X-Axis
 	sts ADMUX, rTemp
+
 	// Start AD converting
 	lds rTemp, ADCSRA
 	sbr rTemp, 1<<6
 	sts ADCSRA, rTemp
-waitForAD:
-	// Busy Wait loop
-	ldi rArg, 1
-	rcall wait
+waitForAD1:
 	// sbrc = Skip if bit 6 in register is cleared
 	lds rTemp, ADCSRA
 	sbrc rTemp, 6
-	jmp waitForAD
-	// --Call for X-Axis--
-	//   ldi rArg, 4
-	//   call getInput
-	// --Call for Y-Axis--
-	//   ldi rArg, 5
-	//   call getInput
-	// --Get value after convert is done with--
-	//   lds rTemp, ADCH
+	jmp waitForAD1
+
+	// Check Direction ur moving
+	lds rTemp, ADCH
+
+	// Default Stick Position is about 130 = 0b10000010 = 0x82
+	// cpi rTemp, 160
+	// brge setRight
+	cpi rTemp, -25
+	brsh setLeft
+	cpi rTemp, 25
+	brlo setRight
+
+	// Return if stick isnt moved
+	ret
+setLeft:
+	ldi rTemp, 3
+	mov rDir, rTemp
+ret
+setRight:
+	ldi rTemp, 1
+	mov rDir, rTemp
+ret
+
+getInputY:
+	// Load ADMUX to rTemp
+	lds rTemp, ADMUX
+	// Clear ADMUX from input register get
+	andi rTemp, 0xF0
+	// get Input from X Position
+	ori  rTemp, 4
+	// Set ADMUX register to get input from X-Axis
+	sts ADMUX, rTemp
+
+	// Start AD converting
+	lds rTemp, ADCSRA
+	sbr rTemp, 1<<6
+	sts ADCSRA, rTemp
+waitForAD2:
+	// sbrc = Skip if bit 6 in register is cleared
+	lds rTemp, ADCSRA
+	sbrc rTemp, 6
+	jmp waitForAD2
+
+	// Check Direction ur moving
+	lds rTemp, ADCH
+
+	// Default Stick Position is about 130 = 0b10000010 = 0x82
+	// cpi rTemp, 160
+	// brge setRight
+	cpi rTemp, -25
+	brsh setUp
+	cpi rTemp, 25
+	brlo setDown
+
+	// Return if stick isnt moved
+	ret
+setUp:
+	ldi rTemp, 0
+	mov rDir, rTemp
+ret
+setDown:
+	ldi rTemp, 2
+	mov rDir, rTemp
 ret

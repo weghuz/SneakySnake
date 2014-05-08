@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Thu May 08 11:22:40 2014
+AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Thu May 08 11:39:56 2014
 
 
 EQU  SIGNATURE_000 0000001e
@@ -712,30 +712,35 @@ DSEG adress       00000100
 DSEG matrix       00000110
 DSEG snake        00000118
 CSEG init         00000034
-CSEG timerCount   0000013b
+CSEG timerCount   00000137
 CSEG InitializeSnake 00000034
-CSEG GameLoop     0000006b
-CSEG SnakeMove    000000c1
-CSEG reset        0000007e
-CSEG checkrow     0000008b
-CSEG plusC        00000084
-CSEG setDrow      00000087
-CSEG plusD        0000008a
-CSEG invertBits   0000013f
-CSEG loop         000000a4
-CSEG wait         000000bc
-CSEG dontJump     000000b5
-CSEG waitloop     000000bd
-CSEG MoveUp       000000cf
-CSEG MoveRight    000000d9
-CSEG MoveDown     000000e6
-CSEG MoveLeft     000000f0
-CSEG SnakeMoveLoopInit 00000101
-CSEG SnakeMoveLoopInitBitSwitch 000000fd
-CSEG SnakeMoveLoop 00000105
-CSEG ClearDisplayMatrix 0000010c
-CSEG SnakeToMatrixDisplay 0000011f
-CSEG STMDLoop     00000123
-CSEG BitSwitch    0000012f
-CSEG getInput     00000151
-CSEG waitForAD    0000015d
+CSEG GameLoop     00000066
+CSEG SnakeToMatrixDisplay 0000010a
+CSEG getInputX    0000014d
+CSEG getInputY    0000016a
+CSEG SnakeMove    000000bf
+CSEG reset        0000007c
+CSEG DrawRow      00000089
+CSEG plusC        00000082
+CSEG setDrow      00000085
+CSEG plusD        00000088
+CSEG invertBits   0000013b
+CSEG wait         000000ba
+CSEG dontJump     000000b3
+CSEG waitloop     000000bb
+CSEG MoveUp       000000cd
+CSEG MoveRight    000000d7
+CSEG MoveDown     000000e4
+CSEG MoveLeft     000000ee
+CSEG SnakeMoveLoopInit 000000ff
+CSEG SnakeMoveLoopInitBitSwitch 000000fb
+CSEG SnakeMoveLoop 00000103
+CSEG STMDLoop     0000011f
+CSEG initBitSwitch 0000012d
+CSEG BitSwitch    0000012b
+CSEG waitForAD1   00000158
+CSEG setLeft      00000164
+CSEG setRight     00000167
+CSEG waitForAD2   00000175
+CSEG setUp        00000181
+CSEG setDown      00000184
