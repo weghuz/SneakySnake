@@ -33,7 +33,7 @@ snake:    .BYTE MAX_LENGTH+1
 	jmp init // Reset vector
 .ORG 0x0020
 	sei
-	jmp GameLoop
+	jmp timerCount
 //... fler interrupts
 .ORG INT_VECTORS_SIZE
 
@@ -116,8 +116,9 @@ init:
 	out SPL, rTemp
 // Här skall all spellogik vara
 GameLoop:
-	rcall getInputX
-	rcall getInputY
+	ldi rTemp, 0b00000011
+	and rDir, rTemp
+	mov rTimerCount, rZero
 	ldi rTemp, 0
 	ldi rTemp2, 0
 	ldi rTemp3, 0
@@ -159,10 +160,18 @@ GameLoop:
 
 	// Här börjar draw funktionen
 reset:
+	sbrs rDir, 2
+	rcall getInputX
+	sbrs rDir, 2
+	rcall getInputY
+
 	ldi	YH, HIGH(matrix)
 	ldi	YL, LOW(matrix)
 	ldi	rTemp2, 0b00000001
 	ldi	rTemp, 0b00000000
+	ldi rTemp3, 12
+	cp rTimerCount, rTemp3
+	brsh GameLoop
 	jmp DrawRow
 plusC:
 	lsl	rTemp2
@@ -252,15 +261,16 @@ SnakeMove:
 	// Hämta första huvudet o flytta den till den riktningen som joysticen riktar mot
 	ld	rTemp, Y 					// Hämta värdet(Koordinaterna)
 	mov rTemp2, rDir				// Laddar in riktningen av maskenshuvud
+	andi rTemp2, 0b00000011
 
-	cpi	rTemp2, 0			// if( rDir == 0 )	-> Move Up
-	breq MoveUp
-	cpi	rTemp2, 1			// if( rDir == 1 )	-> Move Right
-	breq MoveRight
-	cpi	rTemp2, 2			// if( rDir == 2 )	-> Move Down
+	cpi	rTemp2, 0			// if( rDir == 0 )	-> Move Down
 	breq MoveDown
-	cpi	rTemp2, 3			// if( rDir == 3 )	-> Move Left
+	cpi	rTemp2, 1			// if( rDir == 1 )	-> Move Left
 	breq MoveLeft
+	cpi	rTemp2, 2			// if( rDir == 2 )	-> Move Up
+	breq MoveUp
+	cpi	rTemp2, 3			// if( rDir == 3 )	-> Move Right
+	breq MoveRight
 
 MoveUp:
 	
@@ -456,9 +466,9 @@ brne STMDLoop
 ret // Loopa igenom alla kroppsdelar
 
 timerCount:
-	mov rTemp, rTimerCount
-	subi rTemp, -1
-	mov rTimerCount, rTemp
+	mov rInterruptTemp, rTimerCount
+	subi rInterruptTemp, -1
+	mov rTimerCount, rInterruptTemp
 reti
 
 invertBits:
@@ -506,20 +516,27 @@ waitForAD1:
 
 	// Default Stick Position is about 130 = 0b10000010 = 0x82
 	// cpi rTemp, 160
-	// brge setRight
-	cpi rTemp, -25
+	mov rTemp2, rDir
+	// brge SetLeft
+	cpi rTemp2, 1
+	breq checkRight
+	cpi rTemp, -100
 	brsh setLeft
-	cpi rTemp, 25
+CheckRight:
+	cpi rTemp2, 3
+	breq endInputX
+	cpi rTemp, 100
 	brlo setRight
 
+endInputX:
 	// Return if stick isnt moved
 	ret
 setLeft:
-	ldi rTemp, 3
+	ldi rTemp, 0b00000111
 	mov rDir, rTemp
 ret
 setRight:
-	ldi rTemp, 1
+	ldi rTemp, 0b00000101
 	mov rDir, rTemp
 ret
 
@@ -542,25 +559,32 @@ waitForAD2:
 	lds rTemp, ADCSRA
 	sbrc rTemp, 6
 	jmp waitForAD2
-
+			
 	// Check Direction ur moving
 	lds rTemp, ADCH
 
 	// Default Stick Position is about 130 = 0b10000010 = 0x82
 	// cpi rTemp, 160
 	// brge setRight
-	cpi rTemp, -25
+	mov rTemp2, rDir
+	// brge SetLeft
+	cpi rTemp2, 2
+	breq checkDown
+	cpi rTemp, -100
 	brsh setUp
-	cpi rTemp, 25
+checkDown:
+	cpi rTemp2, 0
+	breq endInputY
+	cpi rTemp, 100
 	brlo setDown
-
+endInputY:
 	// Return if stick isnt moved
 	ret
 setUp:
-	ldi rTemp, 0
+	ldi rTemp, 0b00000100
 	mov rDir, rTemp
 ret
 setDown:
-	ldi rTemp, 2
+	ldi rTemp, 0b00000110
 	mov rDir, rTemp
 ret
