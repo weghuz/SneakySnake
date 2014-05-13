@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue May 13 16:03:03 2014
+AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue May 13 16:11:54 2014
 
 [builtin](2): Including file 'C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR Assembler\Native\2.1.1103\avrassembler\Include\m328Pdef.inc'
                  
@@ -1117,7 +1117,8 @@ AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\Snea
 000076 d047      	rcall SnakeMove
 000077 d095      	rcall SnakeToMatrixDisplay
 000078 d114      	rcall NewAppleX
-                     //	rcall SnakeCollision
+                 
+                 	//	rcall SnakeCollision
                  
                  	// Initiera Matrisen i Minnet
                  
@@ -1601,8 +1602,8 @@ AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\Snea
 00018f e1c0      ldi YL, LOW(matrix)
 000190 e0d1      ldi YH, HIGH(matrix)
 000191 e021      ldi rTemp3, 1
-                 NewAppelLoopX:
 000192 e011      ldi rTemp2, 0b00000001
+                 NewAppelLoopX:
 000193 152b      cp rTemp3,rAppelX
 000194 f0c8      brlo AppeleCounterX
 000195 8108      ld rTemp, Y
@@ -1620,8 +1621,8 @@ AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\Snea
 00019f e1c0      ldi YL, LOW(matrix)
 0001a0 e0d1      ldi YH, HIGH(matrix)
 0001a1 e021      ldi rTemp3, 1
-                 NewAppelLoopY:
 0001a2 e011      ldi rTemp2, 0b00000001
+                 NewAppelLoopY:
 0001a3 152c      cp rTemp3,rAppelY
 0001a4 f070      brlo AppeleCounterY
 0001a5 0f11      lsl rTemp2
@@ -1637,12 +1638,12 @@ AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\Snea
 0001ae 9109      ld rTemp, Y+
 0001af 0f11      lsl rTemp2
 0001b0 5f2f      subi rTemp3, -1
-0001b1 940c 0192 jmp NewAppelLoopX
+0001b1 940c 0193 jmp NewAppelLoopX
                  AppeleCounterY:
 0001b3 9109      ld rTemp, Y+
 0001b4 0f11      lsl rTemp2
 0001b5 5f2f      subi rTemp3, -1
-0001b6 940c 01a2 jmp NewAppelLoopY
+0001b6 940c 01a3 jmp NewAppelLoopY
 
 
 RESOURCE USE INFORMATION
