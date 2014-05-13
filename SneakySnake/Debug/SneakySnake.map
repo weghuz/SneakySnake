@@ -1,9 +1,5 @@
 
-<<<<<<< HEAD
-AVRASM ver. 2.1.52  C:\Users\GamerOne\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue May 13 15:46:51 2014
-=======
-AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue May 13 14:47:09 2014
->>>>>>> 2e6841e092f20e7a48a37463faaf2f6ee7fdbd51
+AVRASM ver. 2.1.52  C:\Users\GamerOne\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue May 13 16:01:44 2014
 
 
 EQU  SIGNATURE_000 0000001e
@@ -720,51 +716,6 @@ DSEG adress       00000100
 DSEG matrix       00000110
 DSEG snake        00000118
 CSEG init         00000034
-<<<<<<< HEAD
-CSEG timerCount   0000012c
-CSEG GameLoop     0000006f
-CSEG SnakeMove    000000bc
-CSEG SnakeToMatrixDisplay 00000106
-CSEG reset        00000077
-CSEG getInputX    00000142
-CSEG getInputY    00000164
-CSEG DrawRow      0000008b
-CSEG plusC        00000084
-CSEG setDrow      00000087
-CSEG plusD        0000008a
-CSEG invertBits   00000130
-CSEG wait         000000b7
-CSEG dontJump     000000b0
-CSEG waitloop     000000b8
-CSEG MoveDown     000000e0
-CSEG MoveLeft     000000ea
-CSEG MoveUp       000000c9
-CSEG MoveRight    000000d3
-CSEG SnakeMoveLoopInit 000000fb
-CSEG returnX      000000f7
-CSEG SnakeMoveLoop 000000ff
-CSEG STMDLoop     00000114
-CSEG initBitSwitch 00000122
-CSEG BitSwitch    00000120
-CSEG waitForAD1   0000014d
-CSEG checkRight   00000159
-CSEG setLeft      0000015e
-CSEG endInputX    0000015d
-CSEG setRight     00000161
-CSEG waitForAD2   0000016f
-CSEG checkDown    0000017b
-CSEG setUp        00000180
-CSEG endInputY    0000017f
-CSEG setDown      00000183
-CSEG RandomAppelX 00000186
-CSEG NewAppleX    00000186
-CSEG NewAppelLoopX 0000018a
-CSEG AppeleCounterX 000001a7
-CSEG RandomAppelY 00000196
-CSEG NewAppelY    00000196
-CSEG NewAppelLoopY 0000019a
-CSEG AppeleCounterY 000001ab
-=======
 CSEG timerCount   00000136
 CSEG GameLoop     00000074
 CSEG SnakeMove    000000c1
@@ -802,4 +753,9 @@ CSEG checkDown    00000185
 CSEG setUp        0000018a
 CSEG endInputY    00000189
 CSEG setDown      0000018d
->>>>>>> 2e6841e092f20e7a48a37463faaf2f6ee7fdbd51
+CSEG NewAppleX    00000190
+CSEG NewAppelLoopX 00000195
+CSEG AppeleCounterX 000001b1
+CSEG NewAppelY    000001a0
+CSEG NewAppelLoopY 000001a5
+CSEG AppeleCounterY 000001b6

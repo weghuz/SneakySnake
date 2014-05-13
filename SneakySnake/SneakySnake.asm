@@ -614,52 +614,52 @@ setDown:
 	ldi rTemp, 0b00000110
 	mov rDir, rTemp
 ret
-RandomAppelX:
 
 NewAppleX:
 ldi rTemp, 4
 mov rAppelX, rTemp
 ldi YL, LOW(matrix)
 ldi YH, HIGH(matrix)
+ldi rTemp3, 1
 NewAppelLoopX:
-ldi rTemp, 1
 ldi rTemp2, 0b00000001
-cp rTemp,rAppelX
+cp rTemp3,rAppelX
 brlo AppeleCounterX
 ld rTemp, Y
 lsl rTemp2
 mov rTemp3, rTemp2
 and rTemp2, rTemp
 cp rTemp2,rZero
-brne RandomAppelX
+brne NewAppleX
 or rTemp3, rTemp
 st  Y, rTemp
 
-RandomAppelY:
 NewAppelY:
 mov rAppelY, rTemp
 ldi rTemp, 4
 ldi YL, LOW(matrix)
 ldi YH, HIGH(matrix)
+ldi rTemp3, 1
 NewAppelLoopY:
-ldi rTemp, 1
 ldi rTemp2, 0b00000001
-cp rTemp,rAppelY
+cp rTemp3,rAppelY
 brlo AppeleCounterY
 lsl rTemp2
 ld rTemp, Y
 mov rTemp3, rTemp2
 and rTemp2, rTemp
 cp rTemp2,rZero
-brne RandomAppelY
+brne NewAppelY
 or rTemp3, rTemp
 st Y, rTemp3
 ret
 AppeleCounterX:
 ld rTemp, Y+
 lsl rTemp2
+subi rTemp3, -1
 jmp NewAppelLoopX
 AppeleCounterY:
 ld rTemp, Y+
 lsl rTemp2
+subi rTemp3, -1
 jmp NewAppelLoopY
