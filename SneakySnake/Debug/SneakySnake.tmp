@@ -1,17 +1,17 @@
 <ASSEMBLER_INFO>
  <VERSION>2.1.52</VERSION>
  <DEVICE>"ATmega328P"</DEVICE>
- <WORKING_DIR>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\Debug</WORKING_DIR>
+ <WORKING_DIR>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\Debug</WORKING_DIR>
  <INCLUDE_PATH>
   <DIR>C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR Assembler\Native\2.1.1103\avrassembler\Include</DIR>
   <DIR></DIR>
  </INCLUDE_PATH>
- <SOURCE_FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</SOURCE_FILE>
+ <SOURCE_FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</SOURCE_FILE>
  <INCLUDED_FILES>
   <FILE>C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR Assembler\Native\2.1.1103\avrassembler\Include\m328Pdef.inc</FILE>
  </INCLUDED_FILES>
  <OBJECT_FILES>
-  <FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\Debug/SneakySnake.obj</FILE>
+  <FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\Debug/SneakySnake.obj</FILE>
  </OBJECT_FILES>
  <HEX_FILES>
   <FILE>SneakySnake.hex</FILE>
@@ -21,44 +21,45 @@
   <FILE>SneakySnake.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <adress><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>27</LINE></adress>
-  <matrix><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>28</LINE></matrix>
-  <snake><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>29</LINE></snake>
-  <init><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>41</LINE></init>
-  <timerCount><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>469</LINE></timerCount>
-  <GameLoop><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>119</LINE></GameLoop>
-  <SnakeMove><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>254</LINE></SnakeMove>
-  <SnakeToMatrixDisplay><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>398</LINE></SnakeToMatrixDisplay>
-  <reset><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>163</LINE></reset>
-  <getInputX><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>495</LINE></getInputX>
-  <getInputY><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>544</LINE></getInputY>
-  <DrawRow><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>186</LINE></DrawRow>
-  <plusC><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>177</LINE></plusC>
-  <setDrow><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>180</LINE></setDrow>
-  <plusD><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>184</LINE></plusD>
-  <invertBits><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>475</LINE></invertBits>
-  <wait><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>244</LINE></wait>
-  <dontJump><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>232</LINE></dontJump>
-  <waitloop><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>246</LINE></waitloop>
-  <MoveDown><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>323</LINE></MoveDown>
-  <MoveLeft><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>344</LINE></MoveLeft>
-  <MoveUp><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>276</LINE></MoveUp>
-  <MoveRight><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>297</LINE></MoveRight>
-  <SnakeMoveLoopInit><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>376</LINE></SnakeMoveLoopInit>
-  <returnX><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>368</LINE></returnX>
-  <SnakeMoveLoop><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>386</LINE></SnakeMoveLoop>
-  <STMDLoop><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>423</LINE></STMDLoop>
-  <initBitSwitch><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>452</LINE></initBitSwitch>
-  <BitSwitch><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>449</LINE></BitSwitch>
-  <waitForAD1><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>509</LINE></waitForAD1>
-  <checkRight><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>526</LINE></checkRight>
-  <setLeft><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>535</LINE></setLeft>
-  <endInputX><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>532</LINE></endInputX>
-  <setRight><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>539</LINE></setRight>
-  <waitForAD2><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>558</LINE></waitForAD2>
-  <checkDown><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>576</LINE></checkDown>
-  <setUp><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>584</LINE></setUp>
-  <endInputY><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>581</LINE></endInputY>
-  <setDown><FILE>C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>588</LINE></setDown>
+  <adress><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>28</LINE></adress>
+  <matrix><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>29</LINE></matrix>
+  <snake><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>30</LINE></snake>
+  <init><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>42</LINE></init>
+  <timerCount><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>485</LINE></timerCount>
+  <GameLoop><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>127</LINE></GameLoop>
+  <SnakeMove><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>263</LINE></SnakeMove>
+  <SnakeToMatrixDisplay><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>414</LINE></SnakeToMatrixDisplay>
+  <reset><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>172</LINE></reset>
+  <getInputX><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>511</LINE></getInputX>
+  <getInputY><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>560</LINE></getInputY>
+  <DrawRow><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>195</LINE></DrawRow>
+  <plusC><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>186</LINE></plusC>
+  <setDrow><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>189</LINE></setDrow>
+  <plusD><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>193</LINE></plusD>
+  <invertBits><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>491</LINE></invertBits>
+  <wait><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>253</LINE></wait>
+  <dontJump><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>241</LINE></dontJump>
+  <waitloop><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>255</LINE></waitloop>
+  <MoveDown><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>332</LINE></MoveDown>
+  <MoveLeft><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>353</LINE></MoveLeft>
+  <MoveUp><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>285</LINE></MoveUp>
+  <MoveRight><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>306</LINE></MoveRight>
+  <SnakeMoveLoopInit><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>385</LINE></SnakeMoveLoopInit>
+  <returnX><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>377</LINE></returnX>
+  <SnakeMoveLoop><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>396</LINE></SnakeMoveLoop>
+  <SnakeCollision><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>410</LINE></SnakeCollision>
+  <STMDLoop><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>439</LINE></STMDLoop>
+  <initBitSwitch><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>468</LINE></initBitSwitch>
+  <BitSwitch><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>465</LINE></BitSwitch>
+  <waitForAD1><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>525</LINE></waitForAD1>
+  <checkRight><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>542</LINE></checkRight>
+  <setLeft><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>551</LINE></setLeft>
+  <endInputX><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>548</LINE></endInputX>
+  <setRight><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>555</LINE></setRight>
+  <waitForAD2><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>574</LINE></waitForAD2>
+  <checkDown><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>592</LINE></checkDown>
+  <setUp><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>600</LINE></setUp>
+  <endInputY><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>597</LINE></endInputY>
+  <setDown><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>604</LINE></setDown>
  </LABELS>
 </ASSEMBLER_INFO>

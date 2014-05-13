@@ -399,7 +399,7 @@ SnakeMoveLoop:
 	st Y+, rTemp2
 	mov rTemp2, rTemp
 
-	cpi rSnakeHead, rTemp2
+	cp rSnakeHead, rTemp2
 	breq init
 
 	subi rTemp3, 1
