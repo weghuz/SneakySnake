@@ -8,6 +8,8 @@
 .DEF rZero			= r0
 .DEF rSL			= r9 // SL = SnakeLength, current snake length
 .DEF rDir			= r10
+.DEF rAppelX		= r11
+.DEF rAppelY		= r12
 .DEF rTimerCount	= r15
 .DEF rTemp			= r16
 .DEF rTemp2			= r17
@@ -115,6 +117,7 @@ init:
 	ldi rTemp, LOW(RAMEND)
 	out SPL, rTemp
 // Här skall all spellogik vara
+
 GameLoop:
 	ldi rTemp, 0b00000011
 	and rDir, rTemp
@@ -588,3 +591,52 @@ setDown:
 	ldi rTemp, 0b00000110
 	mov rDir, rTemp
 ret
+RandomAppelX:
+
+NewAppleX:
+ldi rTemp, 4
+mov rAppelX, rTemp
+ldi YL, LOW(matrix)
+ldi YH, HIGH(matrix)
+NewAppelLoopX:
+ldi rTemp, 1
+ldi rTemp2, 0b00000001
+cp rTemp,rAppelX
+brlo AppeleCounterX
+ld rTemp, Y
+lsl rTemp2
+mov rTemp3, rTemp2
+and rTemp2, rTemp
+cp rTemp2,rZero
+brne RandomAppelX
+or rTemp3, rTemp
+st  Y, rTemp
+
+RandomAppelY:
+NewAppelY:
+mov rAppelY, rTemp
+ldi rTemp, 4
+ldi YL, LOW(matrix)
+ldi YH, HIGH(matrix)
+NewAppelLoopY:
+ldi rTemp, 1
+ldi rTemp2, 0b00000001
+cp rTemp,rAppelY
+brlo AppeleCounterY
+lsl rTemp2
+ld rTemp, Y
+mov rTemp3, rTemp2
+and rTemp2, rTemp
+cp rTemp2,rZero
+brne RandomAppelY
+or rTemp3, rTemp
+st Y, rTemp3
+ret
+AppeleCounterX:
+ld rTemp, Y+
+lsl rTemp2
+jmp NewAppelLoopX
+AppeleCounterY:
+ld rTemp, Y+
+lsl rTemp2
+jmp NewAppelLoopY

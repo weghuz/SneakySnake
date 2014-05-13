@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Thu May 08 16:33:28 2014
+AVRASM ver. 2.1.52  C:\Users\GamerOne\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue May 13 15:46:51 2014
 
 
 EQU  SIGNATURE_000 0000001e
@@ -696,6 +696,8 @@ EQU  INT_VECTORS_SIZE 00000034
 DEF  rZero        r0
 DEF  rSL          r9
 DEF  rDir         r10
+DEF  rAppelX      r11
+DEF  rAppelY      r12
 DEF  rTimerCount  r15
 DEF  rTemp        r16
 DEF  rTemp2       r17
@@ -747,3 +749,11 @@ CSEG checkDown    0000017b
 CSEG setUp        00000180
 CSEG endInputY    0000017f
 CSEG setDown      00000183
+CSEG RandomAppelX 00000186
+CSEG NewAppleX    00000186
+CSEG NewAppelLoopX 0000018a
+CSEG AppeleCounterX 000001a7
+CSEG RandomAppelY 00000196
+CSEG NewAppelY    00000196
+CSEG NewAppelLoopY 0000019a
+CSEG AppeleCounterY 000001ab
