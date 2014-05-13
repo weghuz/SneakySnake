@@ -48,17 +48,17 @@ init:
 	ldi rTemp, 0
 	mov rDir, rTemp
 	// Sätter ormens position
-	ldi	rMatrixTemp, 0x00
+	ldi	rMatrixTemp, 0x10
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x01
+	ldi	rMatrixTemp, 0x11
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x02
+	ldi	rMatrixTemp, 0x12
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x03
+	ldi	rMatrixTemp, 0x13
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x04
+	ldi	rMatrixTemp, 0x14
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x05
+	ldi	rMatrixTemp, 0x15
 	st	Y, rMatrixTemp
 
 	// Clear rZero to make sure its 0
@@ -395,16 +395,19 @@ SnakeMoveLoopInit:
 
 SnakeMoveLoop:
 	
-	ld	rTemp, Y
-	st Y+, rTemp2
-	mov rTemp2, rTemp
 
-	ld	rTemp, Y
-	cp rSnakeHead, rTemp
+
+	ld	rTemp, Y		// rTemp saves the old position
+	st Y+, rTemp2		// Replace the body with the new position
+
+	cp rSnakeHead, rTemp2
 	brne JumpOverOneInstruction
 	jmp init
-
 JumpOverOneInstruction:
+
+	mov rTemp2, rTemp	// Move the old body position to rTemp
+
+
 	subi rTemp3, 1
 	cpi rTemp3, 1
 	brne SnakeMoveLoop
