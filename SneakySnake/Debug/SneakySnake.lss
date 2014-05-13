@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue May 13 13:51:54 2014
+AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue May 13 14:12:23 2014
 
 [builtin](2): Including file 'C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR Assembler\Native\2.1.1103\avrassembler\Include\m328Pdef.inc'
                  
@@ -989,6 +989,7 @@ AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\Sne
                   */ 
                  
                  .DEF rZero			= r0
+                 .DEF rSnakeHead		= r7
                  .DEF rApplePosition = r8
                  .DEF rSL			= r9 // SL = SnakeLength, current snake length
                  .DEF rDir			= r10
@@ -1017,7 +1018,7 @@ AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\Sne
 000000 940c 0034 	jmp init // Reset vector
                  .ORG 0x0020
 000020 9478      	sei
-000021 940c 012d 	jmp timerCount
+000021 940c 0136 	jmp timerCount
                  //... fler interrupts
                  .ORG INT_VECTORS_SIZE
                  
@@ -1037,23 +1038,26 @@ AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\Sne
 00003c e062      	ldi	rMatrixTemp, 0x02
 00003d 9369      	st	Y+, rMatrixTemp
 00003e e063      	ldi	rMatrixTemp, 0x03
-00003f 8368      	st	Y, rMatrixTemp
+00003f 9369      	st	Y+, rMatrixTemp
+000040 e064      	ldi	rMatrixTemp, 0x04
+000041 9369      	st	Y+, rMatrixTemp
+000042 e065      	ldi	rMatrixTemp, 0x05
+000043 8368      	st	Y, rMatrixTemp
                  
-000040 e000      	ldi rTemp, 0
-000041 2e00      	mov rZero, rTemp
-000042 2400      	clr rZero
+                 	// Clear rZero to make sure its 0
+000044 2400      	clr rZero
+                 
                  	// Laddar in värdet 4 till rSL; rSL = 4
-000043 e004      	ldi rTemp, 4
-000044 2e90      	MOV rSL, rTemp
+000045 e006      	ldi rTemp, 6
+000046 2e90      	MOV rSL, rTemp
+                 
+000047 e505      	ldi rTemp, 0x55
+000048 2e80      	MOV rApplePosition, rTemp
                  
                  	// Initiera Matrisen i Minnet
-000045 e0d1      	ldi	YH, HIGH(matrix)
-000046 e1c0      	ldi	YL, LOW(matrix)
+000049 e0d1      	ldi	YH, HIGH(matrix)
+00004a e1c0      	ldi	YL, LOW(matrix)
                  	// Ladda in matrisens rader
-000047 e060      	ldi	rMatrixTemp, 0b00000000
-000048 9369      	st	Y+, rMatrixTemp
-000049 e060      	ldi	rMatrixTemp, 0b00000000
-00004a 9369      	st	Y+, rMatrixTemp
 00004b e060      	ldi	rMatrixTemp, 0b00000000
 00004c 9369      	st	Y+, rMatrixTemp
 00004d e060      	ldi	rMatrixTemp, 0b00000000
@@ -1065,49 +1069,54 @@ AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\Sne
 000053 e060      	ldi	rMatrixTemp, 0b00000000
 000054 9369      	st	Y+, rMatrixTemp
 000055 e060      	ldi	rMatrixTemp, 0b00000000
-000056 8368      	st	Y, rMatrixTemp
+000056 9369      	st	Y+, rMatrixTemp
+000057 e060      	ldi	rMatrixTemp, 0b00000000
+000058 9369      	st	Y+, rMatrixTemp
+000059 e060      	ldi	rMatrixTemp, 0b00000000
+00005a 8368      	st	Y, rMatrixTemp
                  	// Initiera AD-omvandlare
-000057 e600      	ldi	rTemp, 0b01100000
-000058 9300 007c 	sts ADMUX, rTemp
-00005a e807      	ldi rTemp, 0b10000111
-00005b 9300 007a 	sts ADCSRA, rTemp
+00005b e600      	ldi	rTemp, 0b01100000
+00005c 9300 007c 	sts ADMUX, rTemp
+00005e e807      	ldi rTemp, 0b10000111
+00005f 9300 007a 	sts ADCSRA, rTemp
                  	// Initiera PORTB
-00005d ef0f      	ldi	rTemp, 0b11111111
-00005e b904      	out DDRB, rTemp
-                 	// Initiera PORTC
-00005f ec0f      	ldi	rTemp, 0b11001111
-000060 b907      	out	DDRC, rTemp
-                 	// Initiera PORTD
 000061 ef0f      	ldi	rTemp, 0b11111111
-000062 b90a      	out DDRD, rTemp
+000062 b904      	out DDRB, rTemp
+                 	// Initiera PORTC
+000063 ec0f      	ldi	rTemp, 0b11001111
+000064 b907      	out	DDRC, rTemp
+                 	// Initiera PORTD
+000065 ef0f      	ldi	rTemp, 0b11111111
+000066 b90a      	out DDRD, rTemp
                  
                  	//timer
-000063 2d00      	mov rTemp, rZero
-000064 e005      	ldi rTemp, (1<<CS02) | (1<<CS00)
-000065 bd05      	out TCCR0B, rTemp
-000066 9478      	sei
-000067 e001      	ldi rTemp, 0b00000001
-000068 9300 006e 	sts TIMSK0,rTemp
+000067 2d00      	mov rTemp, rZero
+000068 e005      	ldi rTemp, (1<<CS02) | (1<<CS00)
+000069 bd05      	out TCCR0B, rTemp
+00006a 9478      	sei
+00006b e001      	ldi rTemp, 0b00000001
+00006c 9300 006e 	sts TIMSK0,rTemp
                  	
                  
                  	// Sätt stackpekaren till högsta minnesadressen
-00006a e0d2      	ldi YH, HIGH( adress * 2)
-00006b e0c0      	ldi YL, LOW( adress * 2 )
+00006e e0d2      	ldi YH, HIGH( adress * 2)
+00006f e0c0      	ldi YL, LOW( adress * 2 )
                  
-00006c e008      	ldi rTemp, HIGH(RAMEND)
-00006d bf0e      	out SPH, rTemp
-00006e ef0f      	ldi rTemp, LOW(RAMEND)
-00006f bf0d      	out SPL, rTemp
+000070 e008      	ldi rTemp, HIGH(RAMEND)
+000071 bf0e      	out SPH, rTemp
+000072 ef0f      	ldi rTemp, LOW(RAMEND)
+000073 bf0d      	out SPL, rTemp
                  // Här skall all spellogik vara
                  GameLoop:
-000070 e003      	ldi rTemp, 0b00000011
-000071 22a0      	and rDir, rTemp
-000072 2cf0      	mov rTimerCount, rZero
-000073 e000      	ldi rTemp, 0
-000074 e010      	ldi rTemp2, 0
-000075 e020      	ldi rTemp3, 0
-000076 d046      	rcall SnakeMove
-000077 d08f      	rcall SnakeToMatrixDisplay
+000074 e003      	ldi rTemp, 0b00000011
+000075 22a0      	and rDir, rTemp
+000076 2cf0      	mov rTimerCount, rZero
+000077 e000      	ldi rTemp, 0
+000078 e010      	ldi rTemp2, 0
+000079 e020      	ldi rTemp3, 0
+00007a d046      	rcall SnakeMove
+00007b d094      	rcall SnakeToMatrixDisplay
+                 //	rcall SnakeCollision
                  
                  	// Initiera Matrisen i Minnet
                  
@@ -1144,94 +1153,94 @@ AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\Sne
                  
                  	// Här börjar draw funktionen
                  reset:
-000078 fea2      	sbrs rDir, 2
-000079 d0c9      	rcall getInputX
-00007a fea2      	sbrs rDir, 2
-00007b d0e9      	rcall getInputY
+00007c fea2      	sbrs rDir, 2
+00007d d0ce      	rcall getInputX
+00007e fea2      	sbrs rDir, 2
+00007f d0ee      	rcall getInputY
                  
-00007c e0d1      	ldi	YH, HIGH(matrix)
-00007d e1c0      	ldi	YL, LOW(matrix)
-00007e e011      	ldi	rTemp2, 0b00000001
-00007f e000      	ldi	rTemp, 0b00000000
-000080 e02c      	ldi rTemp3, 12
-000081 16f2      	cp rTimerCount, rTemp3
-000082 f768      	brsh GameLoop
-000083 940c 008c 	jmp DrawRow
+000080 e0d1      	ldi	YH, HIGH(matrix)
+000081 e1c0      	ldi	YL, LOW(matrix)
+000082 e011      	ldi	rTemp2, 0b00000001
+000083 e000      	ldi	rTemp, 0b00000000
+000084 e02c      	ldi rTemp3, 12
+000085 16f2      	cp rTimerCount, rTemp3
+000086 f768      	brsh GameLoop
+000087 940c 0090 	jmp DrawRow
                  plusC:
-000085 0f11      	lsl	rTemp2
-000086 940c 008c 	jmp DrawRow
+000089 0f11      	lsl	rTemp2
+00008a 940c 0090 	jmp DrawRow
                  setDrow:
-000088 e010      	ldi	rTemp2, 0b00000000
-000089 e004      	ldi	rTemp, 0b00000100
-00008a c001      	rjmp DrawRow
+00008c e010      	ldi	rTemp2, 0b00000000
+00008d e004      	ldi	rTemp, 0b00000100
+00008e c001      	rjmp DrawRow
                  plusD:
-00008b 0f00      	lsl rTemp
+00008f 0f00      	lsl rTemp
                  DrawRow:
-00008c e050      	ldi rOutputD, 0
-00008d e040      	ldi rOutputC, 0
-00008e e030      	ldi rOutputB, 0
-00008f 8168      	ld	rMatrixTemp, Y
+000090 e050      	ldi rOutputD, 0
+000091 e040      	ldi rOutputC, 0
+000092 e030      	ldi rOutputB, 0
+000093 8168      	ld	rMatrixTemp, Y
                  
                  	// Invert the bits of Matrix row
-000090 2f86      	mov rArg, rMatrixTemp
-000091 940e 0131 	call invertBits
-000093 2f68      	mov rMatrixTemp, rArg
+000094 2f86      	mov rArg, rMatrixTemp
+000095 940e 013a 	call invertBits
+000097 2f68      	mov rMatrixTemp, rArg
                  
-000094 0f66      	lsl	rMatrixTemp
-000095 0f66      	lsl	rMatrixTemp
-000096 0f66      	lsl	rMatrixTemp
-000097 0f66      	lsl	rMatrixTemp
 000098 0f66      	lsl	rMatrixTemp
 000099 0f66      	lsl	rMatrixTemp
-00009a 2b56      	or	rOutputD, rMatrixTemp
-00009b 2b50      	or	rOutputD, rTemp
-00009c 8168      	ld	rMatrixTemp, Y
+00009a 0f66      	lsl	rMatrixTemp
+00009b 0f66      	lsl	rMatrixTemp
+00009c 0f66      	lsl	rMatrixTemp
+00009d 0f66      	lsl	rMatrixTemp
+00009e 2b56      	or	rOutputD, rMatrixTemp
+00009f 2b50      	or	rOutputD, rTemp
+0000a0 8168      	ld	rMatrixTemp, Y
                  	
                  	// Invert the bits of Matrix row
-00009d 2f86      	mov rArg, rMatrixTemp
-00009e 940e 0131 	call invertBits
-0000a0 2f68      	mov rMatrixTemp, rArg
+0000a1 2f86      	mov rArg, rMatrixTemp
+0000a2 940e 013a 	call invertBits
+0000a4 2f68      	mov rMatrixTemp, rArg
                  
-0000a1 9566      	lsr	rMatrixTemp
-0000a2 9566      	lsr	rMatrixTemp
-0000a3 2b36      	or	rOutputB, rMatrixTemp
-0000a4 2b41      	or	rOutputC, rTemp2
+0000a5 9566      	lsr	rMatrixTemp
+0000a6 9566      	lsr	rMatrixTemp
+0000a7 2b36      	or	rOutputB, rMatrixTemp
+0000a8 2b41      	or	rOutputC, rTemp2
                  
                  	// Light the display Leds with output
-0000a5 b935      	out	PORTB, rOutputB
-0000a6 b948      	out PORTC, rOutputC
-0000a7 b95b      	out	PORTD, rOutputD
+0000a9 b935      	out	PORTB, rOutputB
+0000aa b948      	out PORTC, rOutputC
+0000ab b95b      	out	PORTD, rOutputD
                  	// Wait for 100 loops	
-0000a8 ef8f      	ldi	rArg, 255
-0000a9 d00e      	rcall wait
+0000ac ef8f      	ldi	rArg, 255
+0000ad d00e      	rcall wait
                  	// Reset Output to turn off lights on display.
-0000aa b805      	out	PORTB, rZero
-0000ab b808      	out PORTC, rZero
-0000ac b80b      	out	PORTD, rZero
+0000ae b805      	out	PORTB, rZero
+0000af b808      	out PORTC, rZero
+0000b0 b80b      	out	PORTD, rZero
                  	// Check if loop has gone through all the rows
-0000ad 31c7      	cpi	YL, LOW(matrix+7)
-0000ae f411      	brne dontJump
-0000af 940c 0078 	jmp reset
+0000b1 31c7      	cpi	YL, LOW(matrix+7)
+0000b2 f411      	brne dontJump
+0000b3 940c 007c 	jmp reset
                  dontJump:
                  	// Subtract the iterator ( Y adress is the Matrix )
-0000b1 5fcf      	subi YL, -1
+0000b5 5fcf      	subi YL, -1
                  	// Check if D rows are being lit and if so plus it
-0000b2 3004      	cpi	rTemp, 0b0000100
-0000b3 f6b8      	brsh plusD
+0000b6 3004      	cpi	rTemp, 0b0000100
+0000b7 f6b8      	brsh plusD
                  	// Check if 4 first rows are lit
-0000b4 3018      	cpi	rTemp2, 0b0001000
-0000b5 f690      	brsh setDrow
+0000b8 3018      	cpi	rTemp2, 0b0001000
+0000b9 f690      	brsh setDrow
                  	// Read Next Row
-0000b6 940c 0085 	jmp plusC
+0000ba 940c 0089 	jmp plusC
                  	// This is a waiting Subroutine, it takes one argument in rArg and it is the number of times it loops.
                  wait:
-0000b8 e060      	ldi	rMatrixTemp, 0
+0000bc e060      	ldi	rMatrixTemp, 0
                  waitloop:
-0000b9 5f6f      	subi rMatrixTemp, -1
-0000ba 1768      	cp	rMatrixTemp, rArg
-0000bb f7e9      	brne waitloop
+0000bd 5f6f      	subi rMatrixTemp, -1
+0000be 1768      	cp	rMatrixTemp, rArg
+0000bf f7e9      	brne waitloop
                  	// ret Returns to caller from subroutine
-0000bc 9508      ret
+0000c0 9508      ret
                  
                  
                  SnakeMove:
@@ -1239,338 +1248,347 @@ AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\Sne
                  	// rTemp = Kordinaterna för Huvudet
                  	// rTemp2 = Riktningen
                  
-0000bd e0d1       	ldi	YH, HIGH(snake)
-0000be e1c8      	ldi	YL, LOW(snake)
+0000c1 e0d1       	ldi	YH, HIGH(snake)
+0000c2 e1c8      	ldi	YL, LOW(snake)
                  
                  	// Hämta första huvudet o flytta den till den riktningen som joysticen riktar mot
-0000bf 8108      	ld	rTemp, Y 					// Hämta värdet(Koordinaterna)
-0000c0 2d1a      	mov rTemp2, rDir				// Laddar in riktningen av maskenshuvud
-0000c1 7013      	andi rTemp2, 0b00000011
+0000c3 8108      	ld	rTemp, Y 					// Hämta värdet(Koordinaterna)
+0000c4 2d1a      	mov rTemp2, rDir				// Laddar in riktningen av maskenshuvud
+0000c5 7013      	andi rTemp2, 0b00000011
                  
-0000c2 3010      	cpi	rTemp2, 0			// if( rDir == 0 )	-> Move Down
-0000c3 f0e9      	breq MoveDown
-0000c4 3011      	cpi	rTemp2, 1			// if( rDir == 1 )	-> Move Left
-0000c5 f129      	breq MoveLeft
-0000c6 3012      	cpi	rTemp2, 2			// if( rDir == 2 )	-> Move Up
-0000c7 f011      	breq MoveUp
-0000c8 3013      	cpi	rTemp2, 3			// if( rDir == 3 )	-> Move Right
-0000c9 f051      	breq MoveRight
+0000c6 3010      	cpi	rTemp2, 0			// if( rDir == 0 )	-> Move Down
+0000c7 f0e9      	breq MoveDown
+0000c8 3011      	cpi	rTemp2, 1			// if( rDir == 1 )	-> Move Left
+0000c9 f129      	breq MoveLeft
+0000ca 3012      	cpi	rTemp2, 2			// if( rDir == 2 )	-> Move Up
+0000cb f011      	breq MoveUp
+0000cc 3013      	cpi	rTemp2, 3			// if( rDir == 3 )	-> Move Right
+0000cd f051      	breq MoveRight
                  
                  MoveUp:
                  	
                  	// rTemp2 = X-Position
                  	// rTemp3 = Y-Position
                  
-0000ca ef10      	ldi rTemp2, 0b11110000
-0000cb 2310      	and rTemp2, rTemp	
+0000ce ef10      	ldi rTemp2, 0b11110000
+0000cf 2310      	and rTemp2, rTemp	
                  
-0000cc e02f      	ldi rTemp3, 0b00001111
-0000cd 2320      	and rTemp3, rTemp	
+0000d0 e02f      	ldi rTemp3, 0b00001111
+0000d1 2320      	and rTemp3, rTemp	
                  
-0000ce 5f2f      	subi rTemp3, -1			// rTemp2++
+0000d2 5f2f      	subi rTemp3, -1			// rTemp2++
                  
                  	// Check if the row is 8(Outside the display), change the value to 0
                  	// if ( rTemp3 == 8 ) -> rTemp3 = 0; 
                  	// else -> Continue
-0000cf 3028      	cpi rTemp3, 8			
-0000d0 f559      	brne SnakeMoveLoopInit					
-0000d1 e020      	ldi rTemp3, 0			
-0000d2 940c 00fc 	jmp SnakeMoveLoopInit
+0000d3 3028      	cpi rTemp3, 8			
+0000d4 f559      	brne SnakeMoveLoopInit					
+0000d5 e020      	ldi rTemp3, 0			
+0000d6 940c 0100 	jmp SnakeMoveLoopInit
                  
                  MoveRight:
                  
                  	// rTemp2 = X-Position
                  	// rTemp3 = Y-Position
                  
-0000d4 e02f      	ldi rTemp3, 0b00001111
-0000d5 2320      	and rTemp3, rTemp	
+0000d8 e02f      	ldi rTemp3, 0b00001111
+0000d9 2320      	and rTemp3, rTemp	
                  
-0000d6 2f10      	mov rTemp2, rTemp
+0000da 2f10      	mov rTemp2, rTemp
                  
-0000d7 9516      	lsr rTemp2
-0000d8 9516      	lsr rTemp2
-0000d9 9516      	lsr rTemp2
-0000da 9516      	lsr rTemp2
+0000db 9516      	lsr rTemp2
+0000dc 9516      	lsr rTemp2
+0000dd 9516      	lsr rTemp2
+0000de 9516      	lsr rTemp2
                  
                  	
-0000db 5011      	subi rTemp2, 1
+0000df 5011      	subi rTemp2, 1
                  
                  	// Check if the row is 8(Outside the display), change the value to 0
                  	// if ( rTemp3 == 255/-1 ) -> rTemp3 = 7; 
                  	// else -> Continue
-0000dc 3f1f      	cpi rTemp2, 0b11111111			// if ( rTemp2 != 255 ) -> Continue
-0000dd f4d1      	brne returnX
-0000de e017      	ldi rTemp2, 7					// X Position = 7
-0000df 940c 00f8 	jmp returnX
+0000e0 3f1f      	cpi rTemp2, 0b11111111			// if ( rTemp2 != 255 ) -> Continue
+0000e1 f4d1      	brne returnX
+0000e2 e017      	ldi rTemp2, 7					// X Position = 7
+0000e3 940c 00fc 	jmp returnX
                  
                  MoveDown:
                  
                  	// rTemp2 = X-Position
                  	// rTemp3 = Y-Position
                  
-0000e1 ef10      	ldi rTemp2, 0b11110000
-0000e2 2310      	and rTemp2, rTemp	
+0000e5 ef10      	ldi rTemp2, 0b11110000
+0000e6 2310      	and rTemp2, rTemp	
                  
-0000e3 e02f      	ldi rTemp3, 0b00001111
-0000e4 2320      	and rTemp3, rTemp	
+0000e7 e02f      	ldi rTemp3, 0b00001111
+0000e8 2320      	and rTemp3, rTemp	
                  
-0000e5 5021      	subi rTemp3, 1
+0000e9 5021      	subi rTemp3, 1
                  
                  	// Check if the row is 8(Outside the display), change the value to 0
                  	// if ( rTemp3 == 255/-1 ) -> rTemp3 = 7; 
                  	// else -> Continue
-0000e6 3f2f      	cpi rTemp3, 0b11111111				// if ( rTemp3 != 255 ) -> Continue
-0000e7 f4a1      	brne SnakeMoveLoopInit					
-0000e8 e027      	ldi rTemp3, 7			// rTemp3 = 7
-0000e9 940c 00fc 	jmp SnakeMoveLoopInit
+0000ea 3f2f      	cpi rTemp3, 0b11111111				// if ( rTemp3 != 255 ) -> Continue
+0000eb f4a1      	brne SnakeMoveLoopInit					
+0000ec e027      	ldi rTemp3, 7			// rTemp3 = 7
+0000ed 940c 0100 	jmp SnakeMoveLoopInit
                  
                  MoveLeft:
                  
                  	// rTemp2 = X-Position
                  	// rTemp3 = Y-Position
                  
-0000eb e02f      	ldi rTemp3, 0b00001111
-0000ec 2320      	and rTemp3, rTemp	
+0000ef e02f      	ldi rTemp3, 0b00001111
+0000f0 2320      	and rTemp3, rTemp	
                  
-0000ed 2f10      	mov rTemp2, rTemp
+0000f1 2f10      	mov rTemp2, rTemp
                  
-0000ee 9516      	lsr rTemp2
-0000ef 9516      	lsr rTemp2
-0000f0 9516      	lsr rTemp2
-0000f1 9516      	lsr rTemp2
+0000f2 9516      	lsr rTemp2
+0000f3 9516      	lsr rTemp2
+0000f4 9516      	lsr rTemp2
+0000f5 9516      	lsr rTemp2
                  
-0000f2 5f1f      	subi rTemp2, -1
+0000f6 5f1f      	subi rTemp2, -1
                  
-0000f3 3018      	cpi rTemp2, 8				// if ( rTemp2 != 255 ) -> Continue
-0000f4 f419      	brne returnX					
-0000f5 e010      	ldi rTemp2, 0			// rTemp2 = 8
-0000f6 940c 00f8 	jmp returnX
+0000f7 3018      	cpi rTemp2, 8				// if ( rTemp2 != 255 ) -> Continue
+0000f8 f419      	brne returnX					
+0000f9 e010      	ldi rTemp2, 0			// rTemp2 = 8
+0000fa 940c 00fc 	jmp returnX
                  
                  // Loopa igenom alla kroppsdelar
                  
                  returnX:
                  
                  	// Switch back rTemp2 to Right Position( X-Postion )
-0000f8 0f11      	lsl rTemp2
-0000f9 0f11      	lsl rTemp2
-0000fa 0f11      	lsl rTemp2
-0000fb 0f11      	lsl rTemp2
+0000fc 0f11      	lsl rTemp2
+0000fd 0f11      	lsl rTemp2
+0000fe 0f11      	lsl rTemp2
+0000ff 0f11      	lsl rTemp2
                  
                  SnakeMoveLoopInit:
                  	// rTemp	= Gammla ormens position 
                  	// rTemp2	= Nya Positionen för ormens kroppsdel
                  	// rTemp3	= Räknare
-0000fc 0f12      	add rTemp2, rTemp3
-0000fd 2d29      	mov rTemp3, rSL
+000100 0f12      	add rTemp2, rTemp3
+000101 2d29      	mov rTemp3, rSL
                  
-0000fe 9319      	st Y+, rTemp2			// Sparar ner den nya positionen för Ormens huvud.
-0000ff 2f10      	mov rTemp2, rTemp
+000102 9319      	st Y+, rTemp2			// Sparar ner den nya positionen för Ormens huvud.
+000103 2e71      	mov rSnakeHead, rTemp2	// Sparar även ner positionen för ormens huvud för att kolla kollison
+000104 2f10      	mov rTemp2, rTemp
                  
                  SnakeMoveLoop:
                  	
-000100 8108      	ld	rTemp, Y
-000101 9319      	st Y+, rTemp2
-000102 2f10      	mov rTemp2, rTemp
+000105 8108      	ld	rTemp, Y
+000106 9319      	st Y+, rTemp2
+000107 2f10      	mov rTemp2, rTemp
                  
-000103 5021      	subi rTemp3, 1
-000104 3021      	cpi rTemp3, 1
-000105 f7d1      	brne SnakeMoveLoop
-000106 9508      ret
+000108 1671      	cp rSnakeHead, rTemp2
+000109 f411      	brne JumpOverOneInstruction
+00010a 940c 0034 	jmp init
+                 
+                 JumpOverOneInstruction:
+00010c 5021      	subi rTemp3, 1
+00010d 3021      	cpi rTemp3, 1
+00010e f7b1      	brne SnakeMoveLoop
+00010f 9508      ret
+                 
+                 SnakeCollision:
+                 
                  
                  
                  SnakeToMatrixDisplay:
                  	
                  	// clear Display
-000107 e0d1      	ldi	YH, HIGH(matrix)
-000108 e1c0      	ldi	YL, LOW(matrix)
+000110 e0d1      	ldi	YH, HIGH(matrix)
+000111 e1c0      	ldi	YL, LOW(matrix)
                  
                  	// Ladda in matrisens rader
-000109 2766      	clr	rMatrixTemp
-00010a 9369      	st	Y+, rMatrixTemp
-00010b 9369      	st	Y+, rMatrixTemp
-00010c 9369      	st	Y+, rMatrixTemp
-00010d 9369      	st	Y+, rMatrixTemp
-00010e 9369      	st	Y+, rMatrixTemp
-00010f 9369      	st	Y+, rMatrixTemp
-000110 9369      	st	Y+, rMatrixTemp
-000111 8368      	st	Y,  rMatrixTemp
+000112 2766      	clr	rMatrixTemp
+000113 9369      	st	Y+, rMatrixTemp
+000114 9369      	st	Y+, rMatrixTemp
+000115 9369      	st	Y+, rMatrixTemp
+000116 9369      	st	Y+, rMatrixTemp
+000117 9369      	st	Y+, rMatrixTemp
+000118 9369      	st	Y+, rMatrixTemp
+000119 9369      	st	Y+, rMatrixTemp
+00011a 8368      	st	Y,  rMatrixTemp
                  
                  	// Y = MatrixDisplayen
                  	// X = Snake
                  	// rMatrixTemp = Räknare
-000112 e0b1      	ldi	XH, HIGH(snake)
-000113 e1a8      	ldi	XL, LOW(snake)
+00011b e0b1      	ldi	XH, HIGH(snake)
+00011c e1a8      	ldi	XL, LOW(snake)
                  
-000114 e060      	ldi rMatrixTemp, 0
+00011d e060      	ldi rMatrixTemp, 0
                  
                  STMDLoop:
-000115 e1c0      	ldi	YL, LOW(matrix)
-000116 e0d1      	ldi	YH, HIGH(matrix)
+00011e e1c0      	ldi	YL, LOW(matrix)
+00011f e0d1      	ldi	YH, HIGH(matrix)
                  
                  	// rTemp	= Vilken Kolum
                  	// rTemp2	= Vilkem Rad
                  	// rTemp3	= Räknare
                  	
                  	// rTemp = X position
-000117 910c      	ld	rTemp, X	// Hämtar Ormens koordinater
+000120 910c      	ld	rTemp, X	// Hämtar Ormens koordinater
                  
                  	// rTemp2 = Y position
-000118 e01f      	ldi rTemp2, 0b00001111
-000119 2310      	and rTemp2, rTemp	// Tar ut Ormens Y koordinat
+000121 e01f      	ldi rTemp2, 0b00001111
+000122 2310      	and rTemp2, rTemp	// Tar ut Ormens Y koordinat
                  	
                  	// Bit-Switchar 4 till höger för att få Ormens X koordinat
-00011a 9506      	lsr rTemp					
-00011b 9506      	lsr rTemp
-00011c 9506      	lsr rTemp
-00011d 9506      	lsr rTemp
+000123 9506      	lsr rTemp					
+000124 9506      	lsr rTemp
+000125 9506      	lsr rTemp
+000126 9506      	lsr rTemp
                  
-00011e 0fc1      	add YL, rTemp2	// Plussar på DisplayMatrixen med Y-koordVärdet.
+000127 0fc1      	add YL, rTemp2	// Plussar på DisplayMatrixen med Y-koordVärdet.
                  	
-00011f e820      	ldi rTemp3, 0b10000000
+000128 e820      	ldi rTemp3, 0b10000000
                  
-000120 c002      	rjmp initBitSwitch
+000129 c002      	rjmp initBitSwitch
                  BitSwitch:
-000121 5001      	subi rTemp, 1
-000122 9526      	lsr rTemp3
+00012a 5001      	subi rTemp, 1
+00012b 9526      	lsr rTemp3
                  initBitSwitch:
-000123 3000      	cpi rTemp, 0
-000124 f7e1      brne BitSwitch
+00012c 3000      	cpi rTemp, 0
+00012d f7e1      brne BitSwitch
                  	
                  	// rTemp ska nu plussa/or med MatrisDisplayen
-000125 8118      	ld	rTemp2, Y
-000126 2b12      	or rTemp2, rTemp3
-000127 8318      	st Y, rTemp2
+00012e 8118      	ld	rTemp2, Y
+00012f 2b12      	or rTemp2, rTemp3
+000130 8318      	st Y, rTemp2
                  
                  	// 2 RÄknare som plussas på
-000128 5f6f      	subi rMatrixTemp, -1	// rMatrixTemp++
-000129 5faf      	subi XL, -1
+000131 5f6f      	subi rMatrixTemp, -1	// rMatrixTemp++
+000132 5faf      	subi XL, -1
                  
-00012a 1569      	cp rMatrixTemp, rSL
-00012b f749      brne STMDLoop
-00012c 9508      ret // Loopa igenom alla kroppsdelar
+000133 1569      	cp rMatrixTemp, rSL
+000134 f749      brne STMDLoop
+000135 9508      ret // Loopa igenom alla kroppsdelar
                  
                  timerCount:
-00012d 2d7f      	mov rInterruptTemp, rTimerCount
-00012e 5f7f      	subi rInterruptTemp, -1
-00012f 2ef7      	mov rTimerCount, rInterruptTemp
-000130 9518      reti
+000136 2d7f      	mov rInterruptTemp, rTimerCount
+000137 5f7f      	subi rInterruptTemp, -1
+000138 2ef7      	mov rTimerCount, rInterruptTemp
+000139 9518      reti
                  
                  invertBits:
-000131 2f28      	mov rTemp3, rArg
-000132 fb20      	bst rTemp3, 0
-000133 f987      	bld rArg, 7
-000134 fb21      	bst rTemp3, 1
-000135 f986      	bld rArg, 6
-000136 fb22      	bst rTemp3, 2
-000137 f985      	bld rArg, 5
-000138 fb23      	bst rTemp3, 3
-000139 f984      	bld rArg, 4
-00013a fb24      	bst rTemp3, 4
-00013b f983      	bld rArg, 3
-00013c fb25      	bst rTemp3, 5
-00013d f982      	bld rArg, 2
-00013e fb26      	bst rTemp3, 6
-00013f f981      	bld rArg, 1
-000140 fb27      	bst rTemp3, 7
-000141 f980      	bld rArg, 0
-000142 9508      ret
+00013a 2f28      	mov rTemp3, rArg
+00013b fb20      	bst rTemp3, 0
+00013c f987      	bld rArg, 7
+00013d fb21      	bst rTemp3, 1
+00013e f986      	bld rArg, 6
+00013f fb22      	bst rTemp3, 2
+000140 f985      	bld rArg, 5
+000141 fb23      	bst rTemp3, 3
+000142 f984      	bld rArg, 4
+000143 fb24      	bst rTemp3, 4
+000144 f983      	bld rArg, 3
+000145 fb25      	bst rTemp3, 5
+000146 f982      	bld rArg, 2
+000147 fb26      	bst rTemp3, 6
+000148 f981      	bld rArg, 1
+000149 fb27      	bst rTemp3, 7
+00014a f980      	bld rArg, 0
+00014b 9508      ret
                  
                  getInputX:
                  	// Load ADMUX to rTemp
-000143 9100 007c 	lds rTemp, ADMUX
+00014c 9100 007c 	lds rTemp, ADMUX
                  	// Clear ADMUX from input register get
-000145 7f00      	andi rTemp, 0xF0
+00014e 7f00      	andi rTemp, 0xF0
                  	// get Input from X Position
-000146 6005      	ori  rTemp, 5
+00014f 6005      	ori  rTemp, 5
                  	// Set ADMUX register to get input from X-Axis
-000147 9300 007c 	sts ADMUX, rTemp
+000150 9300 007c 	sts ADMUX, rTemp
                  
                  	// Start AD converting
-000149 9100 007a 	lds rTemp, ADCSRA
-00014b 6400      	sbr rTemp, 1<<6
-00014c 9300 007a 	sts ADCSRA, rTemp
+000152 9100 007a 	lds rTemp, ADCSRA
+000154 6400      	sbr rTemp, 1<<6
+000155 9300 007a 	sts ADCSRA, rTemp
                  waitForAD1:
                  	// sbrc = Skip if bit 6 in register is cleared
-00014e 9100 007a 	lds rTemp, ADCSRA
-000150 fd06      	sbrc rTemp, 6
-000151 940c 014e 	jmp waitForAD1
+000157 9100 007a 	lds rTemp, ADCSRA
+000159 fd06      	sbrc rTemp, 6
+00015a 940c 0157 	jmp waitForAD1
                  
                  	// Check Direction ur moving
-000153 9100 0079 	lds rTemp, ADCH
+00015c 9100 0079 	lds rTemp, ADCH
                  
                  	// Default Stick Position is about 130 = 0b10000010 = 0x82
                  	// cpi rTemp, 160
-000155 2d1a      	mov rTemp2, rDir
+00015e 2d1a      	mov rTemp2, rDir
                  	// brge SetLeft
-000156 3011      	cpi rTemp2, 1
-000157 f011      	breq checkRight
-000158 390c      	cpi rTemp, -100
-000159 f428      	brsh setLeft
+00015f 3011      	cpi rTemp2, 1
+000160 f011      	breq checkRight
+000161 390c      	cpi rTemp, -100
+000162 f428      	brsh setLeft
                  CheckRight:
-00015a 3013      	cpi rTemp2, 3
-00015b f011      	breq endInputX
-00015c 3604      	cpi rTemp, 100
-00015d f020      	brlo setRight
+000163 3013      	cpi rTemp2, 3
+000164 f011      	breq endInputX
+000165 3604      	cpi rTemp, 100
+000166 f020      	brlo setRight
                  
                  endInputX:
                  	// Return if stick isnt moved
-00015e 9508      	ret
+000167 9508      	ret
                  setLeft:
-00015f e007      	ldi rTemp, 0b00000111
-000160 2ea0      	mov rDir, rTemp
-000161 9508      ret
+000168 e007      	ldi rTemp, 0b00000111
+000169 2ea0      	mov rDir, rTemp
+00016a 9508      ret
                  setRight:
-000162 e005      	ldi rTemp, 0b00000101
-000163 2ea0      	mov rDir, rTemp
-000164 9508      ret
+00016b e005      	ldi rTemp, 0b00000101
+00016c 2ea0      	mov rDir, rTemp
+00016d 9508      ret
                  
                  getInputY:
                  	// Load ADMUX to rTemp
-000165 9100 007c 	lds rTemp, ADMUX
+00016e 9100 007c 	lds rTemp, ADMUX
                  	// Clear ADMUX from input register get
-000167 7f00      	andi rTemp, 0xF0
+000170 7f00      	andi rTemp, 0xF0
                  	// get Input from X Position
-000168 6004      	ori  rTemp, 4
+000171 6004      	ori  rTemp, 4
                  	// Set ADMUX register to get input from X-Axis
-000169 9300 007c 	sts ADMUX, rTemp
+000172 9300 007c 	sts ADMUX, rTemp
                  
                  	// Start AD converting
-00016b 9100 007a 	lds rTemp, ADCSRA
-00016d 6400      	sbr rTemp, 1<<6
-00016e 9300 007a 	sts ADCSRA, rTemp
+000174 9100 007a 	lds rTemp, ADCSRA
+000176 6400      	sbr rTemp, 1<<6
+000177 9300 007a 	sts ADCSRA, rTemp
                  waitForAD2:
                  	// sbrc = Skip if bit 6 in register is cleared
-000170 9100 007a 	lds rTemp, ADCSRA
-000172 fd06      	sbrc rTemp, 6
-000173 940c 0170 	jmp waitForAD2
+000179 9100 007a 	lds rTemp, ADCSRA
+00017b fd06      	sbrc rTemp, 6
+00017c 940c 0179 	jmp waitForAD2
                  			
                  	// Check Direction ur moving
-000175 9100 0079 	lds rTemp, ADCH
+00017e 9100 0079 	lds rTemp, ADCH
                  
                  	// Default Stick Position is about 130 = 0b10000010 = 0x82
                  	// cpi rTemp, 160
                  	// brge setRight
-000177 2d1a      	mov rTemp2, rDir
+000180 2d1a      	mov rTemp2, rDir
                  	// brge SetLeft
-000178 3012      	cpi rTemp2, 2
-000179 f011      	breq checkDown
-00017a 390c      	cpi rTemp, -100
-00017b f428      	brsh setUp
+000181 3012      	cpi rTemp2, 2
+000182 f011      	breq checkDown
+000183 390c      	cpi rTemp, -100
+000184 f428      	brsh setUp
                  checkDown:
-00017c 3010      	cpi rTemp2, 0
-00017d f011      	breq endInputY
-00017e 3604      	cpi rTemp, 100
-00017f f020      	brlo setDown
+000185 3010      	cpi rTemp2, 0
+000186 f011      	breq endInputY
+000187 3604      	cpi rTemp, 100
+000188 f020      	brlo setDown
                  endInputY:
                  	// Return if stick isnt moved
-000180 9508      	ret
+000189 9508      	ret
                  setUp:
-000181 e004      	ldi rTemp, 0b00000100
-000182 2ea0      	mov rDir, rTemp
-000183 9508      ret
+00018a e004      	ldi rTemp, 0b00000100
+00018b 2ea0      	mov rDir, rTemp
+00018c 9508      ret
                  setDown:
-000184 e006      	ldi rTemp, 0b00000110
-000185 2ea0      	mov rDir, rTemp
+00018d e006      	ldi rTemp, 0b00000110
+00018e 2ea0      	mov rDir, rTemp
 
 
 RESOURCE USE INFORMATION
@@ -1588,39 +1606,39 @@ counted separately from r26..r31 here.
 .dseg memory usage only counts static data declared with .byte
 
 "ATmega328P" register use summary:
-r0 :   7 r1 :   0 r2 :   0 r3 :   0 r4 :   0 r5 :   0 r6 :   0 r7 :   0 
-r8 :   0 r9 :   3 r10:  11 r11:   0 r12:   0 r13:   0 r14:   0 r15:   4 
-r16:  85 r17:  53 r18:  33 r19:   3 r20:   3 r21:   4 r22:  55 r23:   3 
+r0 :   6 r1 :   0 r2 :   0 r3 :   0 r4 :   0 r5 :   0 r6 :   0 r7 :   2 
+r8 :   1 r9 :   3 r10:  11 r11:   0 r12:   0 r13:   0 r14:   0 r15:   4 
+r16:  85 r17:  55 r18:  33 r19:   3 r20:   3 r21:   4 r22:  59 r23:   3 
 r24:  15 r25:   0 r26:   2 r27:   1 r28:  10 r29:   7 r30:   0 r31:   0 
-x  :   1 y  :  28 z  :   0 
-Registers used: 19 out of 35 (54.3%)
+x  :   1 y  :  30 z  :   0 
+Registers used: 21 out of 35 (60.0%)
 
 "ATmega328P" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   0 add   :   2 adiw  :   0 and   :   8 
 andi  :   3 asr   :   0 bclr  :   0 bld   :   8 brbc  :   0 brbs  :   0 
 brcc  :   0 brcs  :   0 break :   0 breq  :   8 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   2 brlt  :   0 brmi  :   0 
-brne  :   9 brpl  :   0 brsh  :   5 brtc  :   0 brts  :   0 brvc  :   0 
+brne  :  10 brpl  :   0 brsh  :   5 brtc  :   0 brts  :   0 brvc  :   0 
 brvs  :   0 bset  :   0 bst   :   8 call  :   2 cbi   :   0 cbr   :   0 
 clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   2 cls   :   0 
-clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   3 cpc   :   0 
+clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   4 cpc   :   0 
 cpi   :  21 cpse  :   0 dec   :   0 eor   :   0 fmul  :   0 fmuls :   0 
-fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :  12 
-ld    :   6 ldd   :   0 ldi   :  71 lds   :   8 lpm   :   0 lsl   :  12 
-lsr   :  15 mov   :  24 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
+fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :  13 
+ld    :   6 ldd   :   0 ldi   :  73 lds   :   8 lpm   :   0 lsl   :  12 
+lsr   :  15 mov   :  25 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
 neg   :   0 nop   :   0 or    :   5 ori   :   2 out   :  12 pop   :   0 
 push  :   0 rcall :   5 ret   :  10 reti  :   1 rjmp  :   2 rol   :   0 
 ror   :   0 sbc   :   0 sbci  :   0 sbi   :   0 sbic  :   0 sbis  :   0 
 sbiw  :   0 sbr   :   2 sbrc  :   2 sbrs  :   2 sec   :   0 seh   :   0 
 sei   :   2 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
-sez   :   0 sleep :   0 spm   :   0 st    :  23 std   :   0 sts   :   7 
+sez   :   0 sleep :   0 spm   :   0 st    :  25 std   :   0 sts   :   7 
 sub   :   0 subi  :  11 swap  :   0 tst   :   0 wdr   :   0 
 Instructions used: 34 out of 113 (30.1%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x00030e    688      0    688   32768   2.1%
+[.cseg] 0x000000 0x000320    706      0    706   32768   2.2%
 [.dseg] 0x000100 0x000132      0     50     50    2048   2.4%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 

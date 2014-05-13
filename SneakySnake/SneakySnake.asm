@@ -399,9 +399,11 @@ SnakeMoveLoop:
 	st Y+, rTemp2
 	mov rTemp2, rTemp
 
-	cpi rSnakeHead, rTemp2
-	breq init
+	cp rSnakeHead, rTemp2
+	brne JumpOverOneInstruction
+	jmp init
 
+JumpOverOneInstruction:
 	subi rTemp3, 1
 	cpi rTemp3, 1
 	brne SnakeMoveLoop
