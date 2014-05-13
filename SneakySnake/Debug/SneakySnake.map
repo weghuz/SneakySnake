@@ -1,5 +1,9 @@
 
+<<<<<<< HEAD
 AVRASM ver. 2.1.52  C:\Users\GamerOne\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue May 13 15:46:51 2014
+=======
+AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue May 13 14:47:09 2014
+>>>>>>> 2e6841e092f20e7a48a37463faaf2f6ee7fdbd51
 
 
 EQU  SIGNATURE_000 0000001e
@@ -694,6 +698,8 @@ EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
 DEF  rZero        r0
+DEF  rSnakeHead   r7
+DEF  rApplePosition r8
 DEF  rSL          r9
 DEF  rDir         r10
 DEF  rAppelX      r11
@@ -714,6 +720,7 @@ DSEG adress       00000100
 DSEG matrix       00000110
 DSEG snake        00000118
 CSEG init         00000034
+<<<<<<< HEAD
 CSEG timerCount   0000012c
 CSEG GameLoop     0000006f
 CSEG SnakeMove    000000bc
@@ -757,3 +764,42 @@ CSEG RandomAppelY 00000196
 CSEG NewAppelY    00000196
 CSEG NewAppelLoopY 0000019a
 CSEG AppeleCounterY 000001ab
+=======
+CSEG timerCount   00000136
+CSEG GameLoop     00000074
+CSEG SnakeMove    000000c1
+CSEG SnakeToMatrixDisplay 00000110
+CSEG reset        0000007c
+CSEG getInputX    0000014c
+CSEG getInputY    0000016e
+CSEG DrawRow      00000090
+CSEG plusC        00000089
+CSEG setDrow      0000008c
+CSEG plusD        0000008f
+CSEG invertBits   0000013a
+CSEG wait         000000bc
+CSEG dontJump     000000b5
+CSEG waitloop     000000bd
+CSEG MoveDown     000000e5
+CSEG MoveLeft     000000ef
+CSEG MoveUp       000000ce
+CSEG MoveRight    000000d8
+CSEG SnakeMoveLoopInit 00000100
+CSEG returnX      000000fc
+CSEG SnakeMoveLoop 00000105
+CSEG JumpOverOneInstruction 0000010b
+CSEG SnakeCollision 00000110
+CSEG STMDLoop     0000011e
+CSEG initBitSwitch 0000012c
+CSEG BitSwitch    0000012a
+CSEG waitForAD1   00000157
+CSEG checkRight   00000163
+CSEG setLeft      00000168
+CSEG endInputX    00000167
+CSEG setRight     0000016b
+CSEG waitForAD2   00000179
+CSEG checkDown    00000185
+CSEG setUp        0000018a
+CSEG endInputY    00000189
+CSEG setDown      0000018d
+>>>>>>> 2e6841e092f20e7a48a37463faaf2f6ee7fdbd51

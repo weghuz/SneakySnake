@@ -6,6 +6,8 @@
  */ 
 
 .DEF rZero			= r0
+.DEF rSnakeHead		= r7
+.DEF rApplePosition = r8
 .DEF rSL			= r9 // SL = SnakeLength, current snake length
 .DEF rDir			= r10
 .DEF rAppelX		= r11
@@ -48,21 +50,28 @@ init:
 	ldi rTemp, 0
 	mov rDir, rTemp
 	// Sätter ormens position
-	ldi	rMatrixTemp, 0x00
+	ldi	rMatrixTemp, 0x10
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x01
+	ldi	rMatrixTemp, 0x11
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x02
+	ldi	rMatrixTemp, 0x12
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x03
+	ldi	rMatrixTemp, 0x13
+	st	Y+, rMatrixTemp
+	ldi	rMatrixTemp, 0x14
+	st	Y+, rMatrixTemp
+	ldi	rMatrixTemp, 0x15
 	st	Y, rMatrixTemp
 
-	ldi rTemp, 0
-	mov rZero, rTemp
+	// Clear rZero to make sure its 0
+	clr rZero
 
 	// Laddar in värdet 4 till rSL; rSL = 4
-	ldi rTemp, 4
+	ldi rTemp, 6
 	MOV rSL, rTemp
+
+	ldi rTemp, 0x55
+	MOV rApplePosition, rTemp
 
 	// Initiera Matrisen i Minnet
 	ldi	YH, HIGH(matrix)
@@ -127,6 +136,7 @@ GameLoop:
 	ldi rTemp3, 0
 	rcall SnakeMove
 	rcall SnakeToMatrixDisplay
+//	rcall SnakeCollision
 
 	// Initiera Matrisen i Minnet
 
@@ -383,18 +393,31 @@ SnakeMoveLoopInit:
 	mov rTemp3, rSL
 
 	st Y+, rTemp2			// Sparar ner den nya positionen för Ormens huvud.
+	mov rSnakeHead, rTemp2	// Sparar även ner positionen för ormens huvud för att kolla kollison
 	mov rTemp2, rTemp
 
 SnakeMoveLoop:
 	
-	ld	rTemp, Y
-	st Y+, rTemp2
-	mov rTemp2, rTemp
+
+
+	ld	rTemp, Y		// rTemp saves the old position
+	st Y+, rTemp2		// Replace the body with the new position
+
+	cp rSnakeHead, rTemp2
+	brne JumpOverOneInstruction
+	jmp init
+JumpOverOneInstruction:
+
+	mov rTemp2, rTemp	// Move the old body position to rTemp
+
 
 	subi rTemp3, 1
 	cpi rTemp3, 1
 	brne SnakeMoveLoop
 ret
+
+SnakeCollision:
+
 
 
 SnakeToMatrixDisplay:
