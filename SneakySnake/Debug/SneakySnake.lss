@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue May 13 14:49:59 2014
+AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue May 13 15:55:44 2014
 
 [builtin](2): Including file 'C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR Assembler\Native\2.1.1103\avrassembler\Include\m328Pdef.inc'
                  
@@ -993,6 +993,8 @@ AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\Snea
                  .DEF rApplePosition = r8
                  .DEF rSL			= r9 // SL = SnakeLength, current snake length
                  .DEF rDir			= r10
+                 .DEF rAppelX		= r11
+                 .DEF rAppelY		= r12
                  .DEF rTimerCount	= r15
                  .DEF rTemp			= r16
                  .DEF rTemp2			= r17
@@ -1104,6 +1106,7 @@ AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\Snea
 00006e ef0f      	ldi rTemp, LOW(RAMEND)
 00006f bf0d      	out SPL, rTemp
                  // Här skall all spellogik vara
+                 
                  GameLoop:
 000070 e003      	ldi rTemp, 0b00000011
 000071 22a0      	and rDir, rTemp
@@ -1113,6 +1116,7 @@ AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\Snea
 000075 e020      	ldi rTemp3, 0
 000076 d046      	rcall SnakeMove
 000077 d094      	rcall SnakeToMatrixDisplay
+                 
                  //	rcall SnakeCollision
                  
                  	// Initiera Matrisen i Minnet
@@ -1589,6 +1593,54 @@ AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\Snea
                  setDown:
 000189 e006      	ldi rTemp, 0b00000110
 00018a 2ea0      	mov rDir, rTemp
+00018b 9508      ret
+                 
+                 NewAppleX:
+00018c e004      ldi rTemp, 4
+00018d 2eb0      mov rAppelX, rTemp
+00018e e1c0      ldi YL, LOW(matrix)
+00018f e0d1      ldi YH, HIGH(matrix)
+                 NewAppelLoopX:
+000190 e001      ldi rTemp, 1
+000191 e011      ldi rTemp2, 0b00000001
+000192 150b      cp rTemp,rAppelX
+000193 f0c8      brlo AppeleCounterX
+000194 8108      ld rTemp, Y
+000195 0f11      lsl rTemp2
+000196 2f21      mov rTemp3, rTemp2
+000197 2310      and rTemp2, rTemp
+000198 1510      cp rTemp2,rZero
+000199 f791      brne NewAppleX
+00019a 2b20      or rTemp3, rTemp
+00019b 8308      st  Y, rTemp
+                 
+                 NewAppelY:
+00019c 2ec0      mov rAppelY, rTemp
+00019d e004      ldi rTemp, 4
+00019e e1c0      ldi YL, LOW(matrix)
+00019f e0d1      ldi YH, HIGH(matrix)
+                 NewAppelLoopY:
+0001a0 e001      ldi rTemp, 1
+0001a1 e011      ldi rTemp2, 0b00000001
+0001a2 150c      cp rTemp,rAppelY
+0001a3 f068      brlo AppeleCounterY
+0001a4 0f11      lsl rTemp2
+0001a5 8108      ld rTemp, Y
+0001a6 2f21      mov rTemp3, rTemp2
+0001a7 2310      and rTemp2, rTemp
+0001a8 1510      cp rTemp2,rZero
+0001a9 f791      brne NewAppelY
+0001aa 2b20      or rTemp3, rTemp
+0001ab 8328      st Y, rTemp3
+0001ac 9508      ret
+                 AppeleCounterX:
+0001ad 9109      ld rTemp, Y+
+0001ae 0f11      lsl rTemp2
+0001af 940c 0190 jmp NewAppelLoopX
+                 AppeleCounterY:
+0001b1 9109      ld rTemp, Y+
+0001b2 0f11      lsl rTemp2
+0001b3 940c 01a0 jmp NewAppelLoopY
 
 
 RESOURCE USE INFORMATION
@@ -1606,39 +1658,39 @@ counted separately from r26..r31 here.
 .dseg memory usage only counts static data declared with .byte
 
 "ATmega328P" register use summary:
-r0 :   6 r1 :   0 r2 :   0 r3 :   0 r4 :   0 r5 :   0 r6 :   0 r7 :   2 
-r8 :   1 r9 :   3 r10:  11 r11:   0 r12:   0 r13:   0 r14:   0 r15:   4 
-r16:  85 r17:  55 r18:  33 r19:   3 r20:   3 r21:   4 r22:  55 r23:   3 
-r24:  15 r25:   0 r26:   2 r27:   1 r28:  10 r29:   7 r30:   0 r31:   0 
-x  :   1 y  :  28 z  :   0 
-Registers used: 21 out of 35 (60.0%)
+r0 :   8 r1 :   0 r2 :   0 r3 :   0 r4 :   0 r5 :   0 r6 :   0 r7 :   2 
+r8 :   1 r9 :   3 r10:  11 r11:   2 r12:   2 r13:   0 r14:   0 r15:   4 
+r16: 102 r17:  67 r18:  38 r19:   3 r20:   3 r21:   4 r22:  55 r23:   3 
+r24:  15 r25:   0 r26:   2 r27:   1 r28:  12 r29:   9 r30:   0 r31:   0 
+x  :   1 y  :  34 z  :   0 
+Registers used: 23 out of 35 (65.7%)
 
 "ATmega328P" instruction use summary:
-.lds  :   0 .sts  :   0 adc   :   0 add   :   2 adiw  :   0 and   :   8 
+.lds  :   0 .sts  :   0 adc   :   0 add   :   2 adiw  :   0 and   :  10 
 andi  :   3 asr   :   0 bclr  :   0 bld   :   8 brbc  :   0 brbs  :   0 
 brcc  :   0 brcs  :   0 break :   0 breq  :   8 brge  :   0 brhc  :   0 
-brhs  :   0 brid  :   0 brie  :   0 brlo  :   2 brlt  :   0 brmi  :   0 
-brne  :  10 brpl  :   0 brsh  :   5 brtc  :   0 brts  :   0 brvc  :   0 
+brhs  :   0 brid  :   0 brie  :   0 brlo  :   4 brlt  :   0 brmi  :   0 
+brne  :  12 brpl  :   0 brsh  :   5 brtc  :   0 brts  :   0 brvc  :   0 
 brvs  :   0 bset  :   0 bst   :   8 call  :   2 cbi   :   0 cbr   :   0 
 clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   2 cls   :   0 
-clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   4 cpc   :   0 
+clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   8 cpc   :   0 
 cpi   :  21 cpse  :   0 dec   :   0 eor   :   0 fmul  :   0 fmuls :   0 
-fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :  13 
-ld    :   6 ldd   :   0 ldi   :  71 lds   :   8 lpm   :   0 lsl   :  12 
-lsr   :  15 mov   :  25 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
-neg   :   0 nop   :   0 or    :   5 ori   :   2 out   :  12 pop   :   0 
-push  :   0 rcall :   5 ret   :  10 reti  :   1 rjmp  :   2 rol   :   0 
+fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :  15 
+ld    :  10 ldd   :   0 ldi   :  81 lds   :   8 lpm   :   0 lsl   :  16 
+lsr   :  15 mov   :  29 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
+neg   :   0 nop   :   0 or    :   7 ori   :   2 out   :  12 pop   :   0 
+push  :   0 rcall :   5 ret   :  11 reti  :   1 rjmp  :   2 rol   :   0 
 ror   :   0 sbc   :   0 sbci  :   0 sbi   :   0 sbic  :   0 sbis  :   0 
 sbiw  :   0 sbr   :   2 sbrc  :   2 sbrs  :   2 sec   :   0 seh   :   0 
 sei   :   2 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
-sez   :   0 sleep :   0 spm   :   0 st    :  23 std   :   0 sts   :   7 
+sez   :   0 sleep :   0 spm   :   0 st    :  25 std   :   0 sts   :   7 
 sub   :   0 subi  :  11 swap  :   0 tst   :   0 wdr   :   0 
 Instructions used: 34 out of 113 (30.1%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x000318    698      0    698   32768   2.1%
+[.cseg] 0x000000 0x00036a    780      0    780   32768   2.4%
 [.dseg] 0x000100 0x000132      0     50     50    2048   2.4%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 
