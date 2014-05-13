@@ -56,16 +56,12 @@ init:
 	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0x03
 	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x04
-	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x05
-	st	Y, rMatrixTemp
 
 	// Clear rZero to make sure its 0
 	clr rZero
 
 	// Laddar in värdet 4 till rSL; rSL = 4
-	ldi rTemp, 6
+	ldi rTemp, 4
 	MOV rSL, rTemp
 
 	ldi rTemp, 0x55
@@ -400,7 +396,9 @@ SnakeMoveLoop:
 	mov rTemp2, rTemp
 
 	cp rSnakeHead, rTemp2
-	breq init
+	brne JumpOverOneInstruction
+	jmp init
+JumpOverOneInstruction:
 
 	subi rTemp3, 1
 	cpi rTemp3, 1
