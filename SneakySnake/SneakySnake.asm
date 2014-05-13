@@ -136,6 +136,7 @@ GameLoop:
 	ldi rTemp3, 0
 	rcall SnakeMove
 	rcall SnakeToMatrixDisplay
+	rcall NewAppleX
 //	rcall SnakeCollision
 
 	// Initiera Matrisen i Minnet
@@ -621,8 +622,8 @@ mov rAppelX, rTemp
 ldi YL, LOW(matrix)
 ldi YH, HIGH(matrix)
 ldi rTemp3, 1
-NewAppelLoopX:
 ldi rTemp2, 0b00000001
+NewAppelLoopX:
 cp rTemp3,rAppelX
 brlo AppeleCounterX
 ld rTemp, Y
@@ -640,8 +641,8 @@ ldi rTemp, 4
 ldi YL, LOW(matrix)
 ldi YH, HIGH(matrix)
 ldi rTemp3, 1
-NewAppelLoopY:
 ldi rTemp2, 0b00000001
+NewAppelLoopY:
 cp rTemp3,rAppelY
 brlo AppeleCounterY
 lsl rTemp2
