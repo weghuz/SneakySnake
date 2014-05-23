@@ -65,8 +65,8 @@
   <setDown><FILE>C:\Users\GamerOne\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>614</LINE></setDown>
   <NewAppelLoopX><FILE>C:\Users\GamerOne\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>624</LINE></NewAppelLoopX>
   <AppeleCounterX><FILE>C:\Users\GamerOne\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>646</LINE></AppeleCounterX>
-  <NewAppelY><FILE>C:\Users\GamerOne\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>630</LINE></NewAppelY>
-  <NewAppelLoopY><FILE>C:\Users\GamerOne\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>636</LINE></NewAppelLoopY>
-  <AppeleCounterY><FILE>C:\Users\GamerOne\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>650</LINE></AppeleCounterY>
+  <NewAppelY><FILE>C:\Users\GamerOne\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>629</LINE></NewAppelY>
+  <NewAppelLoopY><FILE>C:\Users\GamerOne\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>635</LINE></NewAppelLoopY>
+  <AppeleCounterY><FILE>C:\Users\GamerOne\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>651</LINE></AppeleCounterY>
  </LABELS>
 </ASSEMBLER_INFO>
