@@ -358,7 +358,7 @@ MoveLeft:
 	lsr rTemp2
 	lsr rTemp2
 
-	subi rTemp2, -1			subi rTemp2, 1		// rTemp2++, PositionX++
+	subi rTemp2, -1		    // rTemp2++, PositionX++
 
 	cpi rTemp2, 8		    // if ( rTemp2 != 255 ) -> Continue
 	brne returnX					
