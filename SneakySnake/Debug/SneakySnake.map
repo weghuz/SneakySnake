@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue May 13 16:11:54 2014
+AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Fri May 23 02:26:07 2014
 
 
 EQU  SIGNATURE_000 0000001e
@@ -694,6 +694,7 @@ EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
 DEF  rZero        r0
+DEF  rRandomNumber r6
 DEF  rSnakeHead   r7
 DEF  rApplePosition r8
 DEF  rSL          r9
@@ -720,15 +721,15 @@ CSEG timerCount   00000133
 CSEG GameLoop     00000070
 CSEG SnakeMove    000000be
 CSEG SnakeToMatrixDisplay 0000010d
-CSEG NewAppleX    0000018d
+CSEG NewAppleX    00000194
 CSEG reset        00000079
-CSEG getInputX    00000149
-CSEG getInputY    0000016b
+CSEG getInputX    00000150
+CSEG getInputY    00000172
 CSEG DrawRow      0000008d
 CSEG plusC        00000086
 CSEG setDrow      00000089
 CSEG plusD        0000008c
-CSEG invertBits   00000137
+CSEG invertBits   0000013e
 CSEG wait         000000b9
 CSEG dontJump     000000b2
 CSEG waitloop     000000ba
@@ -744,18 +745,19 @@ CSEG SnakeCollision 0000010d
 CSEG STMDLoop     0000011b
 CSEG initBitSwitch 00000129
 CSEG BitSwitch    00000127
-CSEG waitForAD1   00000154
-CSEG checkRight   00000160
-CSEG setLeft      00000165
-CSEG endInputX    00000164
-CSEG setRight     00000168
-CSEG waitForAD2   00000176
-CSEG checkDown    00000182
-CSEG setUp        00000187
-CSEG endInputY    00000186
-CSEG setDown      0000018a
-CSEG NewAppelLoopX 00000193
-CSEG AppeleCounterX 000001ae
-CSEG NewAppelY    0000019d
-CSEG NewAppelLoopY 000001a3
-CSEG AppeleCounterY 000001b3
+CSEG dontResetRandom 00000138
+CSEG waitForAD1   0000015b
+CSEG checkRight   00000167
+CSEG setLeft      0000016c
+CSEG endInputX    0000016b
+CSEG setRight     0000016f
+CSEG waitForAD2   0000017d
+CSEG checkDown    00000189
+CSEG setUp        0000018e
+CSEG endInputY    0000018d
+CSEG setDown      00000191
+CSEG NewAppelLoopX 00000198
+CSEG AppeleCounterX 000001aa
+CSEG NewAppelY    0000019c
+CSEG NewAppelLoopY 000001a1
+CSEG AppeleCounterY 000001ae
