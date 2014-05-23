@@ -625,7 +625,7 @@ ret
 NewAppleX:
 ldi rTemp, 4
 mov rAppelX, rTemp
-ldi rTemp3, 1
+ldi rTemp3, 0
 ldi rTemp2, 0b00000001
 NewAppelLoopX:
 cp rTemp3,rAppelX
@@ -638,7 +638,7 @@ mov rAppelY, rTemp
 ldi rTemp, 4
 ldi YL, LOW(matrix)
 ldi YH, HIGH(matrix)
-ldi rTemp3, 1
+ldi rTemp3, 0
 NewAppelLoopY:
 cp rTemp3,rAppelY
 brlo AppeleCounterY
