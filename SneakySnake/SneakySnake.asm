@@ -266,17 +266,18 @@ ret
 
 SnakeMove:
 
-	// rTemp = Kordinaterna för Huvudet
-	// rTemp2 = Riktningen
+	// rTemp = coordinates for SnakeHead
+	// rTemp2 = Diraction
 
  	ldi	YH, HIGH(snake)
 	ldi	YL, LOW(snake)
 
-	// Hämta första huvudet o flytta den till den riktningen som joysticen riktar mot
+	// Move the head to right position depending which Value rDir have
 	ld	rTemp, Y 					// Hämta värdet(Koordinaterna)
-	mov rTemp2, rDir				// Laddar in riktningen av maskenshuvud
-	andi rTemp2, 0b00000011
+	mov rTemp2, rDir				// Load the diration of the Snake
+	andi rTemp2, 0b00000011			// Make sure it isnt any random value on the other bits
 
+	// Jmp to the right "Move - Function"
 	cpi	rTemp2, 0			// if( rDir == 0 )	-> Move Down
 	breq MoveDown
 	cpi	rTemp2, 1			// if( rDir == 1 )	-> Move Left
@@ -297,7 +298,7 @@ MoveUp:
 	ldi rTemp3, 0b00001111
 	and rTemp3, rTemp	
 
-	subi rTemp3, -1			// rTemp2++
+	subi rTemp3, -1			// rTemp3++, PositionY++
 
 	// Check if the row is 8(Outside the display), change the value to 0
 	// if ( rTemp3 == 8 ) -> rTemp3 = 0; 
@@ -323,7 +324,7 @@ MoveRight:
 	lsr rTemp2
 
 	
-	subi rTemp2, 1
+	subi rTemp2, 1		// rTemp2--, PositionX--
 
 	// Check if the row is 8(Outside the display), change the value to 0
 	// if ( rTemp3 == 255/-1 ) -> rTemp3 = 7; 
@@ -344,14 +345,14 @@ MoveDown:
 	ldi rTemp3, 0b00001111
 	and rTemp3, rTemp	
 
-	subi rTemp3, 1
+	subi rTemp3, 1		// rTemp3--, PositionY--
 
 	// Check if the row is 8(Outside the display), change the value to 0
 	// if ( rTemp3 == 255/-1 ) -> rTemp3 = 7; 
 	// else -> Continue
 	cpi rTemp3, 0b11111111				// if ( rTemp3 != 255 ) -> Continue
 	brne SnakeMoveLoopInit					
-	ldi rTemp3, 7			// rTemp3 = 7
+	ldi rTemp3, 7						// rTemp3 = 7, PositionY = 7
 	jmp SnakeMoveLoopInit
 
 MoveLeft:
@@ -369,9 +370,9 @@ MoveLeft:
 	lsr rTemp2
 	lsr rTemp2
 
-	subi rTemp2, -1
+	subi rTemp2, -1			subi rTemp2, 1		// rTemp2++, PositionX++
 
-	cpi rTemp2, 8				// if ( rTemp2 != 255 ) -> Continue
+	cpi rTemp2, 8		    // if ( rTemp2 != 255 ) -> Continue
 	brne returnX					
 	ldi rTemp2, 0			// rTemp2 = 8
 	jmp returnX
@@ -387,30 +388,28 @@ returnX:
 	lsl rTemp2
 
 SnakeMoveLoopInit:
-	// rTemp	= Gammla ormens position 
-	// rTemp2	= Nya Positionen för ormens kroppsdel
-	// rTemp3	= Räknare
+	// rTemp	= Old Snake Position
+	// rTemp2	= New Position for SnakeBodyPart
+	// rTemp3	= Counter
 	add rTemp2, rTemp3
 	mov rTemp3, rSL
 
-	st Y+, rTemp2			// Sparar ner den nya positionen för Ormens huvud.
-	mov rSnakeHead, rTemp2	// Sparar även ner positionen för ormens huvud för att kolla kollison
+	st Y+, rTemp2			// Save the new position for the Snake-Head
+	mov rSnakeHead, rTemp2	// Save even the SnakeHead-Position for collision check in rSnakeHead
 	mov rTemp2, rTemp
-
-	// if ( Huvud != Äpple ) -> jmp SnakeMoveLoo
-
 
 SnakeMoveLoop:
 	
-
 
 	ld	rTemp, Y		// rTemp saves the old position
 	st Y+, rTemp2		// Replace the body with the new position
 
 	// Collision with the SnakeBody and the head
 	cp rSnakeHead, rTemp2
-	brne JumpOverOneInstruction
-	jmp init
+
+	// restart if the Head hit the Body
+brne JumpOverOneInstruction 
+	jmp init			
 JumpOverOneInstruction:
 
 	mov rTemp2, rTemp	// Move the old body position to rTemp
@@ -422,9 +421,10 @@ JumpOverOneInstruction:
 
 	
 	// if (SnakeHead == Apple ) ->
-	// rSL++
+	// rSL++, rSL = SnakeLenght
 	// add rTemp2 to the end of the snake
 
+	// Transfer rAppleX and rAppleY to Same Position-Standard as SnakeHead-Position have
 	mov rTemp, rAppelX
 	mov rTemp3, rAppelY
 
@@ -434,16 +434,17 @@ JumpOverOneInstruction:
 	lsl rTemp
 	or rTemp, rTemp3
 
+	// Make sure the the two bits we dont use for Position dont have any random value
 	ldi rTemp3, 0b01110111
-	
 	and rTemp, rTemp3
 	and rSnakeHead, rTemp3
 
+	// Check if we the SnakeHead hit the Apple
 	cp rTemp, rSnakeHead
 brne DontAddBody
 
-	ldi rTemp, 1		// Add SnakeBody
-	add rSL, rTemp
+	ldi rTemp, 1		
+	add rSL, rTemp		// Add SnakeBody with 1
 	st Y+, rTemp2		// Store the last bodypart with the last position
 
 
