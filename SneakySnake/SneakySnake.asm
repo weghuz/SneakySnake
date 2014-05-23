@@ -5,32 +5,29 @@
  *   Author: Rasmus Wallberg, Patrik Johansson, Johan Lautakoski
  */
 
-.DEF rZero			= r0
-.DEF rStaticTemp    = r4
-.DEF rStaticTemp2   = r5
-.DEF rRandomNumber  = r6
-.DEF rSnakeHead		= r7
-.DEF rApplePosition = r8
-.DEF rSL			= r9 // SL = SnakeLength, current snake length
-.DEF rDir			= r10
-.DEF rAppelX		= r11
-.DEF rAppelY		= r12
-.DEF rTimerCount	= r15
-.DEF rTemp			= r16
-.DEF rTemp2			= r17
-.DEF rTemp3			= r18
-.DEF rOutputB		= r19
-.DEF rOutputC		= r20
-.DEF rOutputD		= r21
-.DEF rMatrixTemp	= r22
-.DEF rInterruptTemp	= r23
-.DEF rArg			= r24
+.DEF rZero			= r0  // This is a register where we store 0
+.DEF rStaticTemp    = r4  // This is a static temporary register, we use it for the apple X position in a subroutine
+.DEF rStaticTemp2   = r5  // This is a static temporary register, we use it for the apple Y position in a subroutine
+.DEF rRandomNumber  = r6  // We store the "Random" number here.
+.DEF rSnakeHead		= r7  // Position for the snake head
+.DEF rSL			= r9  // SL = SnakeLength, current snake length
+.DEF rDir			= r10 // Dir is the snakes direction
+.DEF rAppelX		= r11 // X Coord for the apple
+.DEF rAppelY		= r12 // Y Coord for the apple
+.DEF rTimerCount	= r15 // Number of timer triggers.
+.DEF rTemp			= r16 // Temporary registers
+.DEF rTemp2			= r17 // Temporary registers
+.DEF rTemp3			= r18 // Temporary registers
+.DEF rOutputB		= r19 // What will be written to Output at port B
+.DEF rOutputC		= r20 // What will be written to Output at port C
+.DEF rOutputD		= r21 // What will be written to Output at port D
+.DEF rMatrixTemp	= r22 // What the matrix row looks like currently in the draw loop
+.DEF rInterruptTemp	= r23 // Temporary register for use in interrupt calls
+.DEF rArg			= r24 // Argument for subroutines
 
-.EQU NUM_COLUMNS   = 8
-
-.EQU MAX_LENGTH    = 64
+.EQU MAX_LENGTH    = 64 // Max length of the snake
 .DSEG
-adress:		.BYTE 16
+adress:	  .BYTE 16  // What will be written to Output at port B
 matrix:   .BYTE 8
 snake:    .BYTE MAX_LENGTH+1
 
@@ -38,21 +35,22 @@ snake:    .BYTE MAX_LENGTH+1
 // Interrupt vector table
 .ORG 0x0000
 	jmp init // Reset vector
+// Timer interrupt origin
 .ORG 0x0020
-	sei
-	jmp timerCount
+	sei // Set the Global Interrupt Flag
+	jmp timerCount // Jump to function to make changed when timer interrupts
 //... fler interrupts
 .ORG INT_VECTORS_SIZE
 
 init:
-
+	// Load the Snake array pointer to Y Register
 	ldi	YH, HIGH(snake)
 	ldi	YL, LOW(snake)
 	
-	// Sätter ormens riktning
+	// Set the snake direction
 	ldi rTemp, 0
 	mov rDir, rTemp
-	// Sätter ormens position
+	// Set the snake position
 	ldi	rMatrixTemp, 0x10
 	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0x11
@@ -66,17 +64,14 @@ init:
 	// Clear rZero to make sure its 0
 	clr rZero
 
-	// Laddar in värdet 4 till rSL; rSL = 4
+	// Load 4 to snake length as that is the starting length ; rSL = 4
 	ldi rTemp, 4
 	MOV rSL, rTemp
 
-	ldi rTemp, 0x55
-	MOV rApplePosition, rTemp
-
-	// Initiera Matrisen i Minnet
+	// Initiate the matrix pointer
 	ldi	YH, HIGH(matrix)
 	ldi	YL, LOW(matrix)
-	// Ladda in matrisens rader
+	// Initiate the matrix rows
 	ldi	rMatrixTemp, 0b00000000
 	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0b00000000
@@ -93,148 +88,134 @@ init:
 	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0b00000000
 	st	Y, rMatrixTemp
-	// Initiera AD-omvandlare
+	// Initiate AD-Converter
 	ldi	rTemp, 0b01100000
 	sts ADMUX, rTemp
 	ldi rTemp, 0b10000111
 	sts ADCSRA, rTemp
-	// Initiera PORTB
+	// Initiate PORTB
 	ldi	rTemp, 0b11111111
 	out DDRB, rTemp
-	// Initiera PORTC
+	// Initiate PORTC
 	ldi	rTemp, 0b11001111
 	out	DDRC, rTemp
-	// Initiera PORTD
+	// Initiate PORTD
 	ldi	rTemp, 0b11111111
 	out DDRD, rTemp
 
-	//timer
+	// timer initiation
 	mov rTemp, rZero
+	// Set the needed bits for initiating the timer
 	ldi rTemp, (1<<CS02) | (1<<CS00)
 	out TCCR0B, rTemp
+	// Set the global interrupt flag
 	sei
 	ldi rTemp, 0b00000001
+	// Starta the timer
 	sts TIMSK0,rTemp
 
 
-	// Sätt stackpekaren till högsta minnesadressen
-	ldi YH, HIGH( adress * 2)
-	ldi YL, LOW( adress * 2 )
-
+	// Set the stack pointer to the highest memory adress in ram
 	ldi rTemp, HIGH(RAMEND)
 	out SPH, rTemp
 	ldi rTemp, LOW(RAMEND)
 	out SPL, rTemp
-// Här skall all spellogik vara
-
+	
+	// GameLoop Contains the game logic
 GameLoop:
+	// Set mask for direction
 	ldi rTemp, 0b00000011
+	// Set the direction that the snake is moving in
 	and rDir, rTemp
+	// Reset temporary registers
 	mov rTimerCount, rZero
 	ldi rTemp, 0
 	ldi rTemp2, 0
 	ldi rTemp3, 0
+	// This label jumps to the place that moves the snake
 	jmp SnakeMove
 GameLoop1:
+	// This subroutine puts the snake in the matrix as is
 	rcall SnakeToMatrixDisplay
+	// Subroutine to update the apple
 	rcall UpdateAppleX
 
-	//	rcall SnakeCollision
-
-	// Initiera Matrisen i Minnet
-
 	
-	ldi	YH, HIGH(matrix)
-	ldi	YL, LOW(matrix)
-
-	/*
-	// Get input from X-axis
-	// Spara matrisens rad0
-	mov	rMatrixTemp, rDir
-	st	Y+, rMatrixTemp
-	// Spara matrisens rad1
-	ldi	rMatrixTemp, 0b00000000
-	st	Y+, rMatrixTemp
-	// Spara matrisens rad2
-	ldi	rMatrixTemp, 0b00000000
-	st	Y+, rMatrixTemp
-	// Spara matrisens rad3
-	ldi	rMatrixTemp, 0b00000000
-	st	Y+, rMatrixTemp	
-	// Spara matrisens rad4
-	ldi	rMatrixTemp, 0b00000000
-	st	Y+, rMatrixTemp
-	// Spara matrisens rad5
-	ldi	rMatrixTemp, 0b00000000
-	st	Y+, rMatrixTemp
-	// Spara matrisens rad6
-	ldi	rMatrixTemp, 0b00000000
-	st	Y+, rMatrixTemp
-	// Spara matrisens rad7
-	ldi	rMatrixTemp, 0b00000000
-	st	Y, rMatrixTemp
-	*/
-
-	// Här börjar draw funktionen
+	// the draw function starts here
 reset:
 	sbrs rDir, 2
+	// Get the input from the X-Axis and AD-convert it
 	rcall getInputX
 	sbrs rDir, 2
+	// Get the input from the Y-Axis and AD-convert it
 	rcall getInputY
 
+	// Initiate the matrix for the draw function
 	ldi	YH, HIGH(matrix)
 	ldi	YL, LOW(matrix)
+	// Set the current coordinate to check to the Upper-most row
 	ldi	rTemp2, 0b00000001
 	ldi	rTemp, 0b00000000
 	ldi rTemp3, 16
+	// Check if rTimercount has interrupted 16 times, if it has, go to GameLoop.
 	cp rTimerCount, rTemp3
 	brsh GameLoop
+	// Draw the first row of the matrix
 	jmp DrawRow
 plusC:
 	lsl	rTemp2
 	jmp DrawRow
 setDrow:
+	// When 2 rows have been written to the matrix we need to set the registers
+	// to start drawing the rows in the other output register because ATMega...
 	ldi	rTemp2, 0b00000000
 	ldi	rTemp, 0b00000100
 	rjmp DrawRow
 plusD:
+	// Set the next row to be drawn in the D output register.
 	lsl rTemp
 DrawRow:
+	// Reset the Temporary registers to be written to
 	ldi rOutputD, 0
 	ldi rOutputC, 0
 	ldi rOutputB, 0
-	ld	rMatrixTemp, Y
-
-	// Invert the bits of Matrix row
-	mov rArg, rMatrixTemp
-	call invertBits
-	mov rMatrixTemp, rArg
-
-	lsl	rMatrixTemp
-	lsl	rMatrixTemp
-	lsl	rMatrixTemp
-	lsl	rMatrixTemp
-	lsl	rMatrixTemp
-	lsl	rMatrixTemp
-	or	rOutputD, rMatrixTemp
-	or	rOutputD, rTemp
+	// Load the current row to be written.
 	ld	rMatrixTemp, Y
 	
+	// Load the Argument for invertBits Subroutine
+	mov rArg, rMatrixTemp
 	// Invert the bits of Matrix row
-	// mov rArg, rMatrixTemp
-	// call invertBits
+	call invertBits
+	// Save the Argument for invertBits Subroutine
+	mov rMatrixTemp, rArg
+	
+	// Shift the Matrix 6 times to get what bits to draw to the other output register
+	// in memory
+	lsl	rMatrixTemp
+	lsl	rMatrixTemp
+	lsl	rMatrixTemp
+	lsl	rMatrixTemp
+	lsl	rMatrixTemp
+	lsl	rMatrixTemp
+	// Save bits to temporary register rOutputD and save them to the Matrix Pointer
+	or	rOutputD, rMatrixTemp
+	or	rOutputD, rTemp
+
+	// Reset Matrix Temp
 	mov rMatrixTemp, rArg
 
+	// Shift bits to get what is needed to draw to Output B
 	lsr	rMatrixTemp
 	lsr	rMatrixTemp
 	or	rOutputB, rMatrixTemp
+	// Set the current row in rOutputC
 	or	rOutputC, rTemp2
 
 	// Light the display Leds with output
 	out	PORTB, rOutputB
 	out PORTC, rOutputC
 	out	PORTD, rOutputD
-	// Wait for 100 loops	
+	// Wait for 255 loops	
 	ldi	rArg, 255
 	rcall wait
 	// Reset Output to turn off lights on display.
@@ -256,12 +237,16 @@ dontJump:
 	brsh setDrow
 	// Read Next Row
 	jmp plusC
-	// This is a waiting Subroutine, it takes one argument in rArg and it is the number of times it loops.
+	// This is a waiting Subroutine, 
+	// it takes one argument in rArg and it is the number of times it loops.
 wait:
 	ldi	rMatrixTemp, 0
 waitloop:
+	// Add one to the iterator
 	subi rMatrixTemp, -1
+	// See if iterator is done
 	cp	rMatrixTemp, rArg
+	// If not loop again
 	brne waitloop
 	// ret Returns to caller from subroutine
 ret
@@ -269,17 +254,18 @@ ret
 
 SnakeMove:
 
-	// rTemp = Kordinaterna för Huvudet
-	// rTemp2 = Riktningen
+	// rTemp = coordinates for SnakeHead
+	// rTemp2 = Diraction
 
  	ldi	YH, HIGH(snake)
 	ldi	YL, LOW(snake)
 
-	// Hämta första huvudet o flytta den till den riktningen som joysticen riktar mot
+	// Move the head to right position depending which Value rDir have
 	ld	rTemp, Y 					// Hämta värdet(Koordinaterna)
-	mov rTemp2, rDir				// Laddar in riktningen av maskenshuvud
-	andi rTemp2, 0b00000011
+	mov rTemp2, rDir				// Load the diration of the Snake
+	andi rTemp2, 0b00000011			// Make sure it isnt any random value on the other bits
 
+	// Jmp to the right "Move - Function"
 	cpi	rTemp2, 0			// if( rDir == 0 )	-> Move Down
 	breq MoveDown
 	cpi	rTemp2, 1			// if( rDir == 1 )	-> Move Left
@@ -300,7 +286,7 @@ MoveUp:
 	ldi rTemp3, 0b00001111
 	and rTemp3, rTemp	
 
-	subi rTemp3, -1			// rTemp2++
+	subi rTemp3, -1			// rTemp3++, PositionY++
 
 	// Check if the row is 8(Outside the display), change the value to 0
 	// if ( rTemp3 == 8 ) -> rTemp3 = 0; 
@@ -326,7 +312,7 @@ MoveRight:
 	lsr rTemp2
 
 	
-	subi rTemp2, 1
+	subi rTemp2, 1		// rTemp2--, PositionX--
 
 	// Check if the row is 8(Outside the display), change the value to 0
 	// if ( rTemp3 == 255/-1 ) -> rTemp3 = 7; 
@@ -347,14 +333,14 @@ MoveDown:
 	ldi rTemp3, 0b00001111
 	and rTemp3, rTemp	
 
-	subi rTemp3, 1
+	subi rTemp3, 1		// rTemp3--, PositionY--
 
 	// Check if the row is 8(Outside the display), change the value to 0
 	// if ( rTemp3 == 255/-1 ) -> rTemp3 = 7; 
 	// else -> Continue
 	cpi rTemp3, 0b11111111				// if ( rTemp3 != 255 ) -> Continue
 	brne SnakeMoveLoopInit					
-	ldi rTemp3, 7			// rTemp3 = 7
+	ldi rTemp3, 7						// rTemp3 = 7, PositionY = 7
 	jmp SnakeMoveLoopInit
 
 MoveLeft:
@@ -372,9 +358,9 @@ MoveLeft:
 	lsr rTemp2
 	lsr rTemp2
 
-	subi rTemp2, -1
+	subi rTemp2, -1			subi rTemp2, 1		// rTemp2++, PositionX++
 
-	cpi rTemp2, 8				// if ( rTemp2 != 255 ) -> Continue
+	cpi rTemp2, 8		    // if ( rTemp2 != 255 ) -> Continue
 	brne returnX					
 	ldi rTemp2, 0			// rTemp2 = 8
 	jmp returnX
@@ -390,30 +376,28 @@ returnX:
 	lsl rTemp2
 
 SnakeMoveLoopInit:
-	// rTemp	= Gammla ormens position 
-	// rTemp2	= Nya Positionen för ormens kroppsdel
-	// rTemp3	= Räknare
+	// rTemp	= Old Snake Position
+	// rTemp2	= New Position for SnakeBodyPart
+	// rTemp3	= Counter
 	add rTemp2, rTemp3
 	mov rTemp3, rSL
 
-	st Y+, rTemp2			// Sparar ner den nya positionen för Ormens huvud.
-	mov rSnakeHead, rTemp2	// Sparar även ner positionen för ormens huvud för att kolla kollison
+	st Y+, rTemp2			// Save the new position for the Snake-Head
+	mov rSnakeHead, rTemp2	// Save even the SnakeHead-Position for collision check in rSnakeHead
 	mov rTemp2, rTemp
-
-	// if ( Huvud != Äpple ) -> jmp SnakeMoveLoo
-
 
 SnakeMoveLoop:
 	
-
 
 	ld	rTemp, Y		// rTemp saves the old position
 	st Y+, rTemp2		// Replace the body with the new position
 
 	// Collision with the SnakeBody and the head
 	cp rSnakeHead, rTemp2
-	brne JumpOverOneInstruction
-	jmp init
+
+	// restart if the Head hit the Body
+brne JumpOverOneInstruction 
+	jmp init			
 JumpOverOneInstruction:
 
 	mov rTemp2, rTemp	// Move the old body position to rTemp
@@ -425,9 +409,10 @@ JumpOverOneInstruction:
 
 	
 	// if (SnakeHead == Apple ) ->
-	// rSL++
+	// rSL++, rSL = SnakeLenght
 	// add rTemp2 to the end of the snake
 
+	// Transfer rAppleX and rAppleY to Same Position-Standard as SnakeHead-Position have
 	mov rTemp, rAppelX
 	mov rTemp3, rAppelY
 
@@ -437,16 +422,17 @@ JumpOverOneInstruction:
 	lsl rTemp
 	or rTemp, rTemp3
 
+	// Make sure the the two bits we dont use for Position dont have any random value
 	ldi rTemp3, 0b01110111
-	
 	and rTemp, rTemp3
 	and rSnakeHead, rTemp3
 
+	// Check if we the SnakeHead hit the Apple
 	cp rTemp, rSnakeHead
 brne DontAddBody
 
-	ldi rTemp, 1		// Add SnakeBody
-	add rSL, rTemp
+	ldi rTemp, 1		
+	add rSL, rTemp		// Add SnakeBody with 1
 	st Y+, rTemp2		// Store the last bodypart with the last position
 	rcall NewAppleX
 
@@ -461,7 +447,7 @@ SnakeToMatrixDisplay:
 	ldi	YL, LOW(matrix)
 	lds rTemp, TCCR0B
 
-	// Ladda in matrisens rader
+	// Clear all rows
 	clr	rMatrixTemp
 	st	Y+, rMatrixTemp
 	st	Y+, rMatrixTemp
@@ -472,39 +458,40 @@ SnakeToMatrixDisplay:
 	st	Y+, rMatrixTemp
 	st	Y,  rMatrixTemp
 
-	// Y = MatrixDisplayen
+	// Y = MatrixDisplay
 	// X = Snake
-	// rMatrixTemp = Räknare
+	// rMatrixTemp = Counter
 	ldi	XH, HIGH(snake)
 	ldi	XL, LOW(snake)
 
-	ldi rMatrixTemp, 0
+	ldi rMatrixTemp, 0  // Reset Counter
 
 STMDLoop:
 	ldi	YL, LOW(matrix)
 	ldi	YH, HIGH(matrix)
 
-	// rTemp	= Vilken Kolum
-	// rTemp2	= Vilkem Rad
-	// rTemp3	= Räknare
+	// rTemp	= Colum
+	// rTemp2	= Row
+	// rTemp3	= Counter
 	
 	// rTemp = X position
-	ld	rTemp, X	// Hämtar Ormens koordinater
+	ld	rTemp, X	// Get the Snake coordinates
 
 	// rTemp2 = Y position
 	ldi rTemp2, 0b00001111
-	and rTemp2, rTemp	// Tar ut Ormens Y koordinat
+	and rTemp2, rTemp	// Take out the SnakeBodyPart Y-Position
 	
-	// Bit-Switchar 4 till höger för att få Ormens X koordinat
+	// Bit-Switch 4 time to right to get the SnakeBodyPart X-Position
 	lsr rTemp					
 	lsr rTemp
 	lsr rTemp
 	lsr rTemp
 
-	add YL, rTemp2	// Plussar på DisplayMatrixen med Y-koordVärdet.
+	add YL, rTemp2	// Jump to the right Y-Postion on the MatrixDisplay, Depend on SnakeBodyPart Y-Position
 	
-	ldi rTemp3, 0b10000000
+	ldi rTemp3, 0b10000000	// Initilize one bit at right
 
+	// BitSwitch to right many times, depend which value SnakePodyPart X-Position have
 	rjmp initBitSwitch
 BitSwitch:
 	subi rTemp, 1
@@ -513,32 +500,44 @@ initBitSwitch:
 	cpi rTemp, 0
 brne BitSwitch
 	
-	// rTemp ska nu plussa/or med MatrisDisplayen
+	// The X - Position add with the current MatrixDisplay
 	ld	rTemp2, Y
 	or rTemp2, rTemp3
 	st Y, rTemp2
 
-	// 2 RÄknare som plussas på
-	subi rMatrixTemp, -1	// rMatrixTemp++
-	subi XL, -1
 
+	subi rMatrixTemp, -1	// Counter++
+	subi XL, -1				// Jump to next SnakeBodyPart
+
+	// End if it have loop through all SnakeBodyParts
 	cp rMatrixTemp, rSL
 brne STMDLoop
-ret // Loopa igenom alla kroppsdelar
+ret 
 
+	// This is where the program jumps when the timer interrupts.
 timerCount:
+	// This is the random function for tha apple position, it is time based and is pseudo random
 	mov rInterruptTemp, rRandomNumber
+	// add 3 to the appl number (it is between 0-64)
 	subi rInterruptTemp, -3
+	// if the random number is equal to or bigger than 65 i subtract 65 from the number
 	cpi rInterruptTemp, 65
 	brsh dontResetRandom
 	subi rInterruptTemp, 65
 dontResetRandom:
+	// Move the random number to its register where it is saved.
 	mov rRandomNumber, rInterruptTemp
+	// This is the count that keeps track of how many interrupts we have had since the last GameLoop update.
 	mov rInterruptTemp, rTimerCount
+	// Add one to the count
 	subi rInterruptTemp, -1
 	mov rTimerCount, rInterruptTemp
+	// Return from interrupt call
 reti
 
+// This subrouting inverts the bits in a register
+// This we did because the display was inverted compared to the registers in our code
+// So we inverted the registers back to be in the right way
 invertBits:
 	mov rTemp3, rArg
 	bst rTemp3, 0
@@ -582,17 +581,18 @@ waitForAD1:
 	// Check Direction ur moving
 	lds rTemp, ADCH
 
-	// Default Stick Position is about 130 = 0b10000010 = 0x82
-	// cpi rTemp, 160
 	mov rTemp2, rDir
-	// brge SetLeft
+	// If direction is 1 jump to checkRight
 	cpi rTemp2, 1
 	breq checkRight
+	// Check if stick is pointing in the left direction
 	cpi rTemp, -100
 	brsh setLeft
 CheckRight:
+	// If direction is 3 jump to End the check
 	cpi rTemp2, 3
 	breq endInputX
+	// Check if stick is pointing to the Right
 	cpi rTemp, 100
 	brlo setRight
 
@@ -600,10 +600,12 @@ endInputX:
 	// Return if stick isnt moved
 	ret
 setLeft:
+	// Set direction to the left Number
 	ldi rTemp, 0b00000111
 	mov rDir, rTemp
 ret
 setRight:
+	// Set direction to the right Number
 	ldi rTemp, 0b00000101
 	mov rDir, rTemp
 ret
@@ -631,27 +633,31 @@ waitForAD2:
 	// Check Direction ur moving
 	lds rTemp, ADCH
 
-	// Default Stick Position is about 130 = 0b10000010 = 0x82
-	// cpi rTemp, 160
-	// brge setRight
+
 	mov rTemp2, rDir
-	// brge SetLeft
+	// Check if the direction is 2, if it is not see if the stick is pointing upwards
 	cpi rTemp2, 2
 	breq checkDown
+	// Check if stick is pointing up
 	cpi rTemp, -100
 	brsh setUp
 checkDown:
+	// Check if direction is not 0, if it is not, check if stick is down.
 	cpi rTemp2, 0
 	breq endInputY
+	// Check if stick is pointing down
 	cpi rTemp, 100
 	brlo setDown
 endInputY:
 	// Return if stick isnt moved
 	ret
+	
+	// set rDir to the up number
 setUp:
 	ldi rTemp, 0b00000100
 	mov rDir, rTemp
 ret
+	// set rDir to the down number
 setDown:
 	ldi rTemp, 0b00000110
 	mov rDir, rTemp
@@ -691,10 +697,15 @@ jmp UpdateAppelLoopY
 
 NewAppleX:
 // Split Random Number To X and Y Coords
+// This takes a random number from 0-64 and converts it to X Coordinates to
+// be compatible with the new apple Loop
 // rTemp2 Is X Coordinate
 ldi rTemp, 0b00000111
 and rTemp, rRandomNumber
 mov rStaticTemp, rTemp
+
+// This takes a random number from 0-64 and converts it to Y Coordinates to
+// be compatible with the new apple Loop
 // rTemp3 is Y Coordinate
 ldi rTemp, 0b00111000
 and rTemp, rRandomNumber
@@ -703,7 +714,7 @@ lsr rStaticTemp2
 lsr rStaticTemp2
 lsr rStaticTemp2
 
-// Load X Coord
+// Load X Coord from the random generated number
 mov rTemp, rStaticTemp
 mov rAppelX, rTemp
 ldi rTemp3, 0 //conter
@@ -713,7 +724,7 @@ cp rTemp3,rAppelX // loop for the bitshift
 brlo AppeleCounterX
 
 NewAppelY:
-// Load Y Coord
+// Load Y Coord from the random generated number
 mov rTemp, rStaticTemp2
 mov rAppelY, rTemp
 ldi YL, LOW(matrix)
