@@ -6,10 +6,13 @@
  */ 
 
 .DEF rZero			= r0
+.DEF rRandomNumber  = r6
 .DEF rSnakeHead		= r7
 .DEF rApplePosition = r8
 .DEF rSL			= r9 // SL = SnakeLength, current snake length
 .DEF rDir			= r10
+.DEF rAppelX		= r11
+.DEF rAppelY		= r12
 .DEF rTimerCount	= r15
 .DEF rTemp			= r16
 .DEF rTemp2			= r17
@@ -55,17 +58,14 @@ init:
 	ldi	rMatrixTemp, 0x12
 	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0x13
-	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x14
-	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x15
 	st	Y, rMatrixTemp
+
 
 	// Clear rZero to make sure its 0
 	clr rZero
 
 	// Laddar in värdet 4 till rSL; rSL = 4
-	ldi rTemp, 6
+	ldi rTemp, 4
 	MOV rSL, rTemp
 
 	ldi rTemp, 0x55
@@ -124,6 +124,7 @@ init:
 	ldi rTemp, LOW(RAMEND)
 	out SPL, rTemp
 // Här skall all spellogik vara
+
 GameLoop:
 	ldi rTemp, 0b00000011
 	and rDir, rTemp
@@ -133,7 +134,9 @@ GameLoop:
 	ldi rTemp3, 0
 	rcall SnakeMove
 	rcall SnakeToMatrixDisplay
-//	rcall SnakeCollision
+	rcall NewAppleX
+
+	//	rcall SnakeCollision
 
 	// Initiera Matrisen i Minnet
 
@@ -393,6 +396,9 @@ SnakeMoveLoopInit:
 	mov rSnakeHead, rTemp2	// Sparar även ner positionen för ormens huvud för att kolla kollison
 	mov rTemp2, rTemp
 
+	// if ( Huvud != Äpple ) -> jmp SnakeMoveLoo
+
+
 SnakeMoveLoop:
 	
 
@@ -400,6 +406,7 @@ SnakeMoveLoop:
 	ld	rTemp, Y		// rTemp saves the old position
 	st Y+, rTemp2		// Replace the body with the new position
 
+	// Collision with the SnakeBody and the head
 	cp rSnakeHead, rTemp2
 	brne JumpOverOneInstruction
 	jmp init
@@ -407,15 +414,40 @@ JumpOverOneInstruction:
 
 	mov rTemp2, rTemp	// Move the old body position to rTemp
 
-
 	subi rTemp3, 1
 	cpi rTemp3, 1
 	brne SnakeMoveLoop
+
+
+	
+	// if (SnakeHead == Apple ) ->
+	// rSL++
+	// add rTemp2 to the end of the snake
+
+	mov rTemp, rAppelX
+	mov rTemp3, rAppelY
+
+	lsl rTemp
+	lsl rTemp
+	lsl rTemp
+	lsl rTemp
+	or rTemp, rTemp3
+
+	ldi rTemp3, 0b01110111
+	
+	and rTemp, rTemp3
+	and rSnakeHead, rTemp3
+
+	cp rTemp, rSnakeHead
+brne DontAddBody
+
+	ldi rTemp, 1		// Add SnakeBody
+	add rSL, rTemp
+	st Y+, rTemp2		// Store the last bodypart with the last position
+
+DontAddBody:
+
 ret
-
-SnakeCollision:
-
-
 
 SnakeToMatrixDisplay:
 	
@@ -490,6 +522,14 @@ brne STMDLoop
 ret // Loopa igenom alla kroppsdelar
 
 timerCount:
+	mov rInterruptTemp, rRandomNumber
+	subi rInterruptTemp, -3
+	cpi rInterruptTemp, 65
+	brsh dontResetRandom
+	mov rInterruptTemp, rZero
+dontResetRandom:
+	subi rInterruptTemp, 65
+	mov rRandomNumber, rInterruptTemp
 	mov rInterruptTemp, rTimerCount
 	subi rInterruptTemp, -1
 	mov rTimerCount, rInterruptTemp
@@ -612,3 +652,39 @@ setDown:
 	ldi rTemp, 0b00000110
 	mov rDir, rTemp
 ret
+
+NewAppleX:
+ldi rTemp, 4
+mov rAppelX, rTemp
+ldi rTemp3, 0
+ldi rTemp2, 0b00000001
+NewAppelLoopX:
+cp rTemp3,rAppelX
+brlo AppeleCounterX
+lsl rTemp2
+mov rTemp3, rTemp2
+
+NewAppelY:
+mov rAppelY, rTemp
+ldi rTemp, 4
+ldi YL, LOW(matrix)
+ldi YH, HIGH(matrix)
+ldi rTemp3, 0
+NewAppelLoopY:
+cp rTemp3,rAppelY
+brlo AppeleCounterY
+ld rTemp, Y
+and rTemp2, rTemp
+cp rTemp2,rZero
+brne NewAppleX
+or rTemp3, rTemp
+st Y, rTemp3
+ret
+AppeleCounterX:
+lsl rTemp2
+subi rTemp3, -1
+jmp NewAppelLoopX
+AppeleCounterY:
+ld rTemp, Y+
+subi rTemp3, -1
+jmp NewAppelLoopY
