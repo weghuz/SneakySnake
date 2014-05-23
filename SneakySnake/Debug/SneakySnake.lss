@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Fri May 23 10:03:41 2014
+AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Fri May 23 10:04:19 2014
 
 [builtin](2): Including file 'C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR Assembler\Native\2.1.1103\avrassembler\Include\m328Pdef.inc'
                  
@@ -1645,17 +1645,17 @@ AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\Sne
 0001a9 152b      cp rTemp3,rAppelX
 0001aa f080      brlo AppeleCounterX
 0001ab 0f11      lsl rTemp2
-0001ac 2f21      mov rTemp3, rTemp2
                  
                  NewAppelY:
+0001ac e004      ldi rTemp, 4
 0001ad 2ec0      mov rAppelY, rTemp
-0001ae e004      ldi rTemp, 4
-0001af e1c0      ldi YL, LOW(matrix)
-0001b0 e0d1      ldi YH, HIGH(matrix)
-0001b1 e020      ldi rTemp3, 0
+0001ae e1c0      ldi YL, LOW(matrix)
+0001af e0d1      ldi YH, HIGH(matrix)
+0001b0 e020      ldi rTemp3, 0
                  NewAppelLoopY:
-0001b2 152c      cp rTemp3,rAppelY
-0001b3 f058      brlo AppeleCounterY
+0001b1 152c      cp rTemp3,rAppelY
+0001b2 f060      brlo AppeleCounterY
+0001b3 2f21      mov rTemp3, rTemp2
 0001b4 8108      ld rTemp, Y
 0001b5 2310      and rTemp2, rTemp
 0001b6 1510      cp rTemp2,rZero
@@ -1667,10 +1667,11 @@ AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\Sne
 0001bb 0f11      lsl rTemp2
 0001bc 5f2f      subi rTemp3, -1
 0001bd 940c 01a9 jmp NewAppelLoopX
+                 
                  AppeleCounterY:
 0001bf 9109      ld rTemp, Y+
 0001c0 5f2f      subi rTemp3, -1
-0001c1 940c 01b2 jmp NewAppelLoopY
+0001c1 940c 01b1 jmp NewAppelLoopY
 
 
 RESOURCE USE INFORMATION

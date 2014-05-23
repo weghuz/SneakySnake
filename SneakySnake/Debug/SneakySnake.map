@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Fri May 23 10:03:41 2014
+AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Fri May 23 10:04:19 2014
 
 
 EQU  SIGNATURE_000 0000001e
@@ -758,6 +758,6 @@ CSEG endInputY    0000019e
 CSEG setDown      000001a2
 CSEG NewAppelLoopX 000001a9
 CSEG AppeleCounterX 000001bb
-CSEG NewAppelY    000001ad
-CSEG NewAppelLoopY 000001b2
+CSEG NewAppelY    000001ac
+CSEG NewAppelLoopY 000001b1
 CSEG AppeleCounterY 000001bf
