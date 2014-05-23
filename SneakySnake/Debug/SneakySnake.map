@@ -1,5 +1,9 @@
 
+<<<<<<< HEAD
 AVRASM ver. 2.1.52  C:\Users\GamerOne\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Fri May 23 09:58:42 2014
+=======
+AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Fri May 23 02:26:07 2014
+>>>>>>> ccbd45b6acc09b381140a0a79e910b9bc6a82e92
 
 
 EQU  SIGNATURE_000 0000001e
@@ -694,6 +698,7 @@ EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
 DEF  rZero        r0
+DEF  rRandomNumber r6
 DEF  rSnakeHead   r7
 DEF  rApplePosition r8
 DEF  rSL          r9
@@ -716,6 +721,7 @@ DSEG adress       00000100
 DSEG matrix       00000110
 DSEG snake        00000118
 CSEG init         00000034
+<<<<<<< HEAD
 CSEG timerCount   00000137
 CSEG GameLoop     00000074
 CSEG SnakeMove    000000c2
@@ -759,3 +765,49 @@ CSEG AppeleCounterX 000001a7
 CSEG NewAppelY    00000198
 CSEG NewAppelLoopY 0000019d
 CSEG AppeleCounterY 000001ab
+=======
+CSEG timerCount   00000133
+CSEG GameLoop     00000070
+CSEG SnakeMove    000000be
+CSEG SnakeToMatrixDisplay 0000010d
+CSEG NewAppleX    00000194
+CSEG reset        00000079
+CSEG getInputX    00000150
+CSEG getInputY    00000172
+CSEG DrawRow      0000008d
+CSEG plusC        00000086
+CSEG setDrow      00000089
+CSEG plusD        0000008c
+CSEG invertBits   0000013e
+CSEG wait         000000b9
+CSEG dontJump     000000b2
+CSEG waitloop     000000ba
+CSEG MoveDown     000000e2
+CSEG MoveLeft     000000ec
+CSEG MoveUp       000000cb
+CSEG MoveRight    000000d5
+CSEG SnakeMoveLoopInit 000000fd
+CSEG returnX      000000f9
+CSEG SnakeMoveLoop 00000102
+CSEG JumpOverOneInstruction 00000108
+CSEG SnakeCollision 0000010d
+CSEG STMDLoop     0000011b
+CSEG initBitSwitch 00000129
+CSEG BitSwitch    00000127
+CSEG dontResetRandom 00000138
+CSEG waitForAD1   0000015b
+CSEG checkRight   00000167
+CSEG setLeft      0000016c
+CSEG endInputX    0000016b
+CSEG setRight     0000016f
+CSEG waitForAD2   0000017d
+CSEG checkDown    00000189
+CSEG setUp        0000018e
+CSEG endInputY    0000018d
+CSEG setDown      00000191
+CSEG NewAppelLoopX 00000198
+CSEG AppeleCounterX 000001aa
+CSEG NewAppelY    0000019c
+CSEG NewAppelLoopY 000001a1
+CSEG AppeleCounterY 000001ae
+>>>>>>> ccbd45b6acc09b381140a0a79e910b9bc6a82e92

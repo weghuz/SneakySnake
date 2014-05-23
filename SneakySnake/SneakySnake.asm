@@ -6,6 +6,7 @@
  */ 
 
 .DEF rZero			= r0
+.DEF rRandomNumber  = r6
 .DEF rSnakeHead		= r7
 .DEF rApplePosition = r8
 .DEF rSL			= r9 // SL = SnakeLength, current snake length
@@ -57,17 +58,14 @@ init:
 	ldi	rMatrixTemp, 0x12
 	st	Y+, rMatrixTemp
 	ldi	rMatrixTemp, 0x13
-	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x14
-	st	Y+, rMatrixTemp
-	ldi	rMatrixTemp, 0x15
 	st	Y, rMatrixTemp
+
 
 	// Clear rZero to make sure its 0
 	clr rZero
 
 	// Laddar in värdet 4 till rSL; rSL = 4
-	ldi rTemp, 6
+	ldi rTemp, 4
 	MOV rSL, rTemp
 
 	ldi rTemp, 0x55
@@ -137,7 +135,8 @@ GameLoop:
 	rcall SnakeMove
 	rcall SnakeToMatrixDisplay
 	rcall NewAppleX
-//	rcall SnakeCollision
+
+	//	rcall SnakeCollision
 
 	// Initiera Matrisen i Minnet
 
@@ -411,7 +410,6 @@ JumpOverOneInstruction:
 
 	mov rTemp2, rTemp	// Move the old body position to rTemp
 
-
 	subi rTemp3, 1
 	cpi rTemp3, 1
 	brne SnakeMoveLoop
@@ -493,6 +491,14 @@ brne STMDLoop
 ret // Loopa igenom alla kroppsdelar
 
 timerCount:
+	mov rInterruptTemp, rRandomNumber
+	subi rInterruptTemp, -3
+	cpi rInterruptTemp, 65
+	brsh dontResetRandom
+	mov rInterruptTemp, rZero
+dontResetRandom:
+	subi rInterruptTemp, 65
+	mov rRandomNumber, rInterruptTemp
 	mov rInterruptTemp, rTimerCount
 	subi rInterruptTemp, -1
 	mov rTimerCount, rInterruptTemp
