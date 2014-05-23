@@ -659,32 +659,33 @@ ret
 
 UpdateAppleX:
 // Load X Coord
-ldi rTemp3, 0
-ldi rTemp2, 0b10000000
+ldi rTemp3, 0 //conter
+ldi rTemp2, 0b10000000 //get bitshifted to the correct position of the appel on the bord (X axis)
 UpdateAppelLoopX:
-cp rTemp3,rAppelX
+cp rTemp3,rAppelX // loop for the bitshift
 brlo AppeleCounterX
 
 UpdateAppelY:
 // Load Y Coord
-ldi YL, LOW(matrix)
-ldi YH, HIGH(matrix)
-ldi rTemp3, 0
+ldi YL, LOW(matrix) //loads the board matrix in to YL
+ldi YH, HIGH(matrix) //loads the board matrix in to YH
+ldi rTemp3, 0//conter
 UpdateAppelLoopY:
-cp rTemp3,rAppelY
+cp rTemp3,rAppelY //loop to find the row the appel is placed on (Y axis)
 brlo AppeleCounterY
 ld rTemp, Y
-or rTemp2, rTemp
-st Y, rTemp2
+or rTemp2, rTemp //running an or between the appel and the board matrix to place the appel in the board matrix
+st Y, rTemp2 
 ret
+
 UpdateAppeleCounterX:
-lsr rTemp2
-subi rTemp3, -1
+lsr rTemp2 //bitshift right
+subi rTemp3, -1 //conter plus 1
 jmp UpdateAppelLoopX
 
 UpdateAppeleCounterY:
-ld rTemp, Y+
-subi rTemp3, -1
+ld rTemp, Y+ // load the next row from the board matrix
+subi rTemp3, -1 //conter plus 1
 jmp UpdateAppelLoopY
 
 
@@ -705,10 +706,10 @@ lsr rStaticTemp2
 // Load X Coord
 mov rTemp, rStaticTemp
 mov rAppelX, rTemp
-ldi rTemp3, 0
-ldi rTemp2, 0b10000000
+ldi rTemp3, 0 //conter
+ldi rTemp2, 0b10000000 //get bitshifted to the correct position of the appel on the bord (X axis)
 NewAppelLoopX:
-cp rTemp3,rAppelX
+cp rTemp3,rAppelX // loop for the bitshift
 brlo AppeleCounterX
 
 NewAppelY:
@@ -717,24 +718,24 @@ mov rTemp, rStaticTemp2
 mov rAppelY, rTemp
 ldi YL, LOW(matrix)
 ldi YH, HIGH(matrix)
-ldi rTemp3, 0
+ldi rTemp3, 0 //conter
 NewAppelLoopY:
-cp rTemp3,rAppelY
+cp rTemp3,rAppelY //loop to find the correct row where the appel should be placed on (Y axis)
 brlo AppeleCounterY
 mov rTemp3, rTemp2
 ld rTemp, Y
-and rTemp2, rTemp
+and rTemp2, rTemp //checks if a part if the worm is on this coordinat. If the worm is here random a new number
 cp rTemp2,rZero
 brne NewAppleX
-or rTemp3, rTemp
+or rTemp3, rTemp //running an or between the appel and the board matrix to place the appel in the board matrix
 st Y, rTemp3
 ret
 AppeleCounterX:
-lsr rTemp2
-subi rTemp3, -1
+lsr rTemp2 //bitshift right
+subi rTemp3, -1 //conter plus 1
 jmp NewAppelLoopX
 
 AppeleCounterY:
-ld rTemp, Y+
-subi rTemp3, -1
+ld rTemp, Y+ //load the next row from the board matrix
+subi rTemp3, -1 //counter plus 1
 jmp NewAppelLoopY

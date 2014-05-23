@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Fri May 23 10:52:24 2014
+AVRASM ver. 2.1.52  C:\Users\GamerOne\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Fri May 23 11:33:14 2014
 
 [builtin](2): Including file 'C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR Assembler\Native\2.1.1103\avrassembler\Include\m328Pdef.inc'
                  
@@ -1642,32 +1642,33 @@ AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\Snea
                  
                  UpdateAppleX:
                  // Load X Coord
-0001a6 e020      ldi rTemp3, 0
-0001a7 e810      ldi rTemp2, 0b10000000
+0001a6 e020      ldi rTemp3, 0 //conter
+0001a7 e810      ldi rTemp2, 0b10000000 //get bitshifted to the correct position of the appel on the bord (X axis)
                  UpdateAppelLoopX:
-0001a8 152b      cp rTemp3,rAppelX
+0001a8 152b      cp rTemp3,rAppelX // loop for the bitshift
 0001a9 f178      brlo AppeleCounterX
                  
                  UpdateAppelY:
                  // Load Y Coord
 0001aa e1c0      ldi YL, LOW(matrix)
 0001ab e0d1      ldi YH, HIGH(matrix)
-0001ac e020      ldi rTemp3, 0
+0001ac e020      ldi rTemp3, 0//conter
                  UpdateAppelLoopY:
-0001ad 152c      cp rTemp3,rAppelY
+0001ad 152c      cp rTemp3,rAppelY //loop to find the row the appel is placed on (Y axis)
 0001ae f170      brlo AppeleCounterY
 0001af 8108      ld rTemp, Y
-0001b0 2b10      or rTemp2, rTemp
-0001b1 8318      st Y, rTemp2
+0001b0 2b10      or rTemp2, rTemp //running an or between the appel and the board matrix to place the appel in the board matrix
+0001b1 8318      st Y, rTemp2 
 0001b2 9508      ret
+                 
                  UpdateAppeleCounterX:
-0001b3 9516      lsr rTemp2
-0001b4 5f2f      subi rTemp3, -1
+0001b3 9516      lsr rTemp2 //bitshift right
+0001b4 5f2f      subi rTemp3, -1 //conter plus 1
 0001b5 940c 01a8 jmp UpdateAppelLoopX
                  
                  UpdateAppeleCounterY:
-0001b7 9109      ld rTemp, Y+
-0001b8 5f2f      subi rTemp3, -1
+0001b7 9109      ld rTemp, Y+ // load the next row from the board matrix
+0001b8 5f2f      subi rTemp3, -1 //conter plus 1
 0001b9 940c 01ad jmp UpdateAppelLoopY
                  
                  
@@ -1688,10 +1689,10 @@ AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\Snea
                  // Load X Coord
 0001c4 2d04      mov rTemp, rStaticTemp
 0001c5 2eb0      mov rAppelX, rTemp
-0001c6 e020      ldi rTemp3, 0
-0001c7 e810      ldi rTemp2, 0b10000000
+0001c6 e020      ldi rTemp3, 0 //conter
+0001c7 e810      ldi rTemp2, 0b10000000 //get bitshifted to the correct position of the appel on the bord (X axis)
                  NewAppelLoopX:
-0001c8 152b      cp rTemp3,rAppelX
+0001c8 152b      cp rTemp3,rAppelX // loop for the bitshift
 0001c9 f078      brlo AppeleCounterX
                  
                  NewAppelY:
@@ -1700,26 +1701,26 @@ AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\Snea
 0001cb 2ec0      mov rAppelY, rTemp
 0001cc e1c0      ldi YL, LOW(matrix)
 0001cd e0d1      ldi YH, HIGH(matrix)
-0001ce e020      ldi rTemp3, 0
+0001ce e020      ldi rTemp3, 0 //conter
                  NewAppelLoopY:
-0001cf 152c      cp rTemp3,rAppelY
+0001cf 152c      cp rTemp3,rAppelY //loop to find the correct row where the appel should be placed on (Y axis)
 0001d0 f060      brlo AppeleCounterY
 0001d1 2f21      mov rTemp3, rTemp2
 0001d2 8108      ld rTemp, Y
-0001d3 2310      and rTemp2, rTemp
+0001d3 2310      and rTemp2, rTemp //checks if a part if the worm is on this coordinat. If the worm is here random a new number
 0001d4 1510      cp rTemp2,rZero
 0001d5 f729      brne NewAppleX
-0001d6 2b20      or rTemp3, rTemp
+0001d6 2b20      or rTemp3, rTemp //running an or between the appel and the board matrix to place the appel in the board matrix
 0001d7 8328      st Y, rTemp3
 0001d8 9508      ret
                  AppeleCounterX:
-0001d9 9516      lsr rTemp2
-0001da 5f2f      subi rTemp3, -1
+0001d9 9516      lsr rTemp2 //bitshift right
+0001da 5f2f      subi rTemp3, -1 //conter plus 1
 0001db 940c 01c8 jmp NewAppelLoopX
                  
                  AppeleCounterY:
-0001dd 9109      ld rTemp, Y+
-0001de 5f2f      subi rTemp3, -1
+0001dd 9109      ld rTemp, Y+ //load the next row from the board matrix
+0001de 5f2f      subi rTemp3, -1 //counter plus 1
 0001df 940c 01cf jmp NewAppelLoopY
 
 
