@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Tue May 13 16:02:13 2014
+AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Fri May 23 09:23:41 2014
 
 [builtin](2): Including file 'C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR Assembler\Native\2.1.1103\avrassembler\Include\m328Pdef.inc'
                  
@@ -1405,7 +1405,7 @@ AVRASM ver. 2.1.52  C:\Users\Patrik\Documents\GitHub\SneakySnake\SneakySnake\Sne
                  	// clear Display
 000110 e0d1      	ldi	YH, HIGH(matrix)
 000111 e1c0      	ldi	YL, LOW(matrix)
-000112 9100 0024 	lds rTemp, TCCR0A
+000112 9100 0025 	lds rTemp, TCCR0B
                  
                  	// Ladda in matrisens rader
 000114 2766      	clr	rMatrixTemp
