@@ -113,7 +113,7 @@ init:
 	sei
 	ldi rTemp, 0b00000001
 	sts TIMSK0,rTemp
-	
+
 
 	// Sätt stackpekaren till högsta minnesadressen
 	ldi YH, HIGH( adress * 2)
@@ -422,6 +422,7 @@ SnakeToMatrixDisplay:
 	// clear Display
 	ldi	YH, HIGH(matrix)
 	ldi	YL, LOW(matrix)
+	lds rTemp, TCCR0B
 
 	// Ladda in matrisens rader
 	clr	rMatrixTemp
