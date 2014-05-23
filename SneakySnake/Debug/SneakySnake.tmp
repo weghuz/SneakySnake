@@ -65,9 +65,9 @@
   <endInputY><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>615</LINE></endInputY>
   <setDown><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>622</LINE></setDown>
   <NewAppelLoopX><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>646</LINE></NewAppelLoopX>
-  <AppeleCounterX><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>669</LINE></AppeleCounterX>
-  <NewAppelY><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>652</LINE></NewAppelY>
-  <NewAppelLoopY><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>659</LINE></NewAppelLoopY>
+  <AppeleCounterX><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>668</LINE></AppeleCounterX>
+  <NewAppelY><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>650</LINE></NewAppelY>
+  <NewAppelLoopY><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>657</LINE></NewAppelLoopY>
   <AppeleCounterY><FILE>C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm</FILE><LINE>673</LINE></AppeleCounterY>
  </LABELS>
 </ASSEMBLER_INFO>

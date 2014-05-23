@@ -639,26 +639,25 @@ lsr rStaticTemp2
 lsr rStaticTemp2
 
 // Load X Coord
-ldi rTemp, 4
+mov rTemp, rStaticTemp
 mov rAppelX, rTemp
 ldi rTemp3, 0
 ldi rTemp2, 0b00000001
 NewAppelLoopX:
 cp rTemp3,rAppelX
 brlo AppeleCounterX
-lsl rTemp2
-mov rTemp3, rTemp2
 
 NewAppelY:
-ldi rTemp, 4
-mov rAppelY, rTemp
 // Load Y Coord
+mov rTemp, rStaticTemp2
+mov rAppelY, rTemp
 ldi YL, LOW(matrix)
 ldi YH, HIGH(matrix)
 ldi rTemp3, 0
 NewAppelLoopY:
 cp rTemp3,rAppelY
 brlo AppeleCounterY
+mov rTemp3, rTemp2
 ld rTemp, Y
 and rTemp2, rTemp
 cp rTemp2,rZero
@@ -670,6 +669,7 @@ AppeleCounterX:
 lsl rTemp2
 subi rTemp3, -1
 jmp NewAppelLoopX
+
 AppeleCounterY:
 ld rTemp, Y+
 subi rTemp3, -1
