@@ -28,7 +28,7 @@
 
 .EQU NUM_COLUMNS   = 8
 
-.EQU MAX_LENGTH    = 25
+.EQU MAX_LENGTH    = 64
 .DSEG
 adress:		.BYTE 16
 matrix:   .BYTE 8
@@ -115,7 +115,7 @@ init:
 	sei
 	ldi rTemp, 0b00000001
 	sts TIMSK0,rTemp
-	
+
 
 	// Sätt stackpekaren till högsta minnesadressen
 	ldi YH, HIGH( adress * 2)
@@ -134,18 +134,20 @@ GameLoop:
 	ldi rTemp, 0
 	ldi rTemp2, 0
 	ldi rTemp3, 0
-	rcall SnakeMove
+	jmp SnakeMove
+GameLoop1:
 	rcall SnakeToMatrixDisplay
-	rcall NewAppleX
+	rcall UpdateAppleX
 
 	//	rcall SnakeCollision
 
 	// Initiera Matrisen i Minnet
 
-	/*
+	
 	ldi	YH, HIGH(matrix)
 	ldi	YL, LOW(matrix)
 
+	/*
 	// Get input from X-axis
 	// Spara matrisens rad0
 	mov	rMatrixTemp, rDir
@@ -219,8 +221,8 @@ DrawRow:
 	ld	rMatrixTemp, Y
 	
 	// Invert the bits of Matrix row
-	mov rArg, rMatrixTemp
-	call invertBits
+	// mov rArg, rMatrixTemp
+	// call invertBits
 	mov rMatrixTemp, rArg
 
 	lsr	rMatrixTemp
@@ -398,6 +400,9 @@ SnakeMoveLoopInit:
 	mov rSnakeHead, rTemp2	// Sparar även ner positionen för ormens huvud för att kolla kollison
 	mov rTemp2, rTemp
 
+	// if ( Huvud != Äpple ) -> jmp SnakeMoveLoo
+
+
 SnakeMoveLoop:
 	
 
@@ -405,6 +410,7 @@ SnakeMoveLoop:
 	ld	rTemp, Y		// rTemp saves the old position
 	st Y+, rTemp2		// Replace the body with the new position
 
+	// Collision with the SnakeBody and the head
 	cp rSnakeHead, rTemp2
 	brne JumpOverOneInstruction
 	jmp init
@@ -415,17 +421,45 @@ JumpOverOneInstruction:
 	subi rTemp3, 1
 	cpi rTemp3, 1
 	brne SnakeMoveLoop
-ret
-
-SnakeCollision:
 
 
+	
+	// if (SnakeHead == Apple ) ->
+	// rSL++
+	// add rTemp2 to the end of the snake
+
+	mov rTemp, rAppelX
+	mov rTemp3, rAppelY
+
+	lsl rTemp
+	lsl rTemp
+	lsl rTemp
+	lsl rTemp
+	or rTemp, rTemp3
+
+	ldi rTemp3, 0b01110111
+	
+	and rTemp, rTemp3
+	and rSnakeHead, rTemp3
+
+	cp rTemp, rSnakeHead
+brne DontAddBody
+
+	ldi rTemp, 1		// Add SnakeBody
+	add rSL, rTemp
+	st Y+, rTemp2		// Store the last bodypart with the last position
+	rcall NewAppleX
+
+
+DontAddBody:
+jmp GameLoop1
 
 SnakeToMatrixDisplay:
 	
 	// clear Display
 	ldi	YH, HIGH(matrix)
 	ldi	YL, LOW(matrix)
+	lds rTemp, TCCR0B
 
 	// Ladda in matrisens rader
 	clr	rMatrixTemp
@@ -497,9 +531,8 @@ timerCount:
 	subi rInterruptTemp, -3
 	cpi rInterruptTemp, 65
 	brsh dontResetRandom
-	mov rInterruptTemp, rZero
-dontResetRandom:
 	subi rInterruptTemp, 65
+dontResetRandom:
 	mov rRandomNumber, rInterruptTemp
 	mov rInterruptTemp, rTimerCount
 	subi rInterruptTemp, -1
@@ -624,6 +657,37 @@ setDown:
 	mov rDir, rTemp
 ret
 
+UpdateAppleX:
+// Load X Coord
+ldi rTemp3, 0
+ldi rTemp2, 0b10000000
+UpdateAppelLoopX:
+cp rTemp3,rAppelX
+brlo AppeleCounterX
+
+UpdateAppelY:
+// Load Y Coord
+ldi YL, LOW(matrix)
+ldi YH, HIGH(matrix)
+ldi rTemp3, 0
+UpdateAppelLoopY:
+cp rTemp3,rAppelY
+brlo AppeleCounterY
+ld rTemp, Y
+or rTemp2, rTemp
+st Y, rTemp2
+ret
+UpdateAppeleCounterX:
+lsr rTemp2
+subi rTemp3, -1
+jmp UpdateAppelLoopX
+
+UpdateAppeleCounterY:
+ld rTemp, Y+
+subi rTemp3, -1
+jmp UpdateAppelLoopY
+
+
 NewAppleX:
 // Split Random Number To X and Y Coords
 // rTemp2 Is X Coordinate
@@ -642,7 +706,7 @@ lsr rStaticTemp2
 mov rTemp, rStaticTemp
 mov rAppelX, rTemp
 ldi rTemp3, 0
-ldi rTemp2, 0b00000001
+ldi rTemp2, 0b10000000
 NewAppelLoopX:
 cp rTemp3,rAppelX
 brlo AppeleCounterX
@@ -666,7 +730,7 @@ or rTemp3, rTemp
 st Y, rTemp3
 ret
 AppeleCounterX:
-lsl rTemp2
+lsr rTemp2
 subi rTemp3, -1
 jmp NewAppelLoopX
 
