@@ -132,7 +132,8 @@ GameLoop:
 	ldi rTemp, 0
 	ldi rTemp2, 0
 	ldi rTemp3, 0
-	rcall SnakeMove
+	jmp SnakeMove
+GameLoop1:
 	rcall SnakeToMatrixDisplay
 	rcall NewAppleX
 
@@ -445,9 +446,10 @@ brne DontAddBody
 	add rSL, rTemp
 	st Y+, rTemp2		// Store the last bodypart with the last position
 
-DontAddBody:
 
-ret
+
+DontAddBody:
+jmp GameLoop1
 
 SnakeToMatrixDisplay:
 	
