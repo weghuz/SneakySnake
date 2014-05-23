@@ -462,7 +462,7 @@ SnakeToMatrixDisplay:
 	ldi	YL, LOW(matrix)
 	lds rTemp, TCCR0B
 
-	// Ladda in matrisens rader
+	// Clear all rows
 	clr	rMatrixTemp
 	st	Y+, rMatrixTemp
 	st	Y+, rMatrixTemp
@@ -473,39 +473,40 @@ SnakeToMatrixDisplay:
 	st	Y+, rMatrixTemp
 	st	Y,  rMatrixTemp
 
-	// Y = MatrixDisplayen
+	// Y = MatrixDisplay
 	// X = Snake
-	// rMatrixTemp = Räknare
+	// rMatrixTemp = Counter
 	ldi	XH, HIGH(snake)
 	ldi	XL, LOW(snake)
 
-	ldi rMatrixTemp, 0
+	ldi rMatrixTemp, 0  // Reset Counter
 
 STMDLoop:
 	ldi	YL, LOW(matrix)
 	ldi	YH, HIGH(matrix)
 
-	// rTemp	= Vilken Kolum
-	// rTemp2	= Vilkem Rad
-	// rTemp3	= Räknare
+	// rTemp	= Colum
+	// rTemp2	= Row
+	// rTemp3	= Counter
 	
 	// rTemp = X position
-	ld	rTemp, X	// Hämtar Ormens koordinater
+	ld	rTemp, X	// Get the Snake coordinates
 
 	// rTemp2 = Y position
 	ldi rTemp2, 0b00001111
-	and rTemp2, rTemp	// Tar ut Ormens Y koordinat
+	and rTemp2, rTemp	// Take out the SnakeBodyPart Y-Position
 	
-	// Bit-Switchar 4 till höger för att få Ormens X koordinat
+	// Bit-Switch 4 time to right to get the SnakeBodyPart X-Position
 	lsr rTemp					
 	lsr rTemp
 	lsr rTemp
 	lsr rTemp
 
-	add YL, rTemp2	// Plussar på DisplayMatrixen med Y-koordVärdet.
+	add YL, rTemp2	// Jump to the right Y-Postion on the MatrixDisplay, Depend on SnakeBodyPart Y-Position
 	
-	ldi rTemp3, 0b10000000
+	ldi rTemp3, 0b10000000	// Initilize one bit at right
 
+	// BitSwitch to right many times, depend which value SnakePodyPart X-Position have
 	rjmp initBitSwitch
 BitSwitch:
 	subi rTemp, 1
@@ -514,18 +515,19 @@ initBitSwitch:
 	cpi rTemp, 0
 brne BitSwitch
 	
-	// rTemp ska nu plussa/or med MatrisDisplayen
+	// The X - Position add with the current MatrixDisplay
 	ld	rTemp2, Y
 	or rTemp2, rTemp3
 	st Y, rTemp2
 
-	// 2 RÄknare som plussas på
-	subi rMatrixTemp, -1	// rMatrixTemp++
-	subi XL, -1
 
+	subi rMatrixTemp, -1	// Counter++
+	subi XL, -1				// Jump to next SnakeBodyPart
+
+	// End if it have loop through all SnakeBodyParts
 	cp rMatrixTemp, rSL
 brne STMDLoop
-ret // Loopa igenom alla kroppsdelar
+ret 
 
 timerCount:
 	mov rInterruptTemp, rRandomNumber
