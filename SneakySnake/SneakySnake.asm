@@ -3,9 +3,11 @@
  *
  *  Created: 2014-04-25 08:52:10
  *   Author: Rasmus Wallberg, Patrik Johansson, Johan Lautakoski
- */ 
+ */
 
 .DEF rZero			= r0
+.DEF rStaticTemp    = r4
+.DEF rStaticTemp2   = r5
 .DEF rRandomNumber  = r6
 .DEF rSnakeHead		= r7
 .DEF rApplePosition = r8
@@ -182,7 +184,7 @@ reset:
 	ldi	YL, LOW(matrix)
 	ldi	rTemp2, 0b00000001
 	ldi	rTemp, 0b00000000
-	ldi rTemp3, 12
+	ldi rTemp3, 16
 	cp rTimerCount, rTemp3
 	brsh GameLoop
 	jmp DrawRow
@@ -623,6 +625,20 @@ setDown:
 ret
 
 NewAppleX:
+// Split Random Number To X and Y Coords
+// rTemp2 Is X Coordinate
+ldi rTemp, 0b00000111
+and rTemp, rRandomNumber
+mov rStaticTemp, rTemp
+// rTemp3 is Y Coordinate
+ldi rTemp, 0b00111000
+and rTemp, rRandomNumber
+mov rStaticTemp2, rTemp
+lsr rStaticTemp2
+lsr rStaticTemp2
+lsr rStaticTemp2
+
+// Load X Coord
 ldi rTemp, 4
 mov rAppelX, rTemp
 ldi rTemp3, 0
@@ -634,8 +650,9 @@ lsl rTemp2
 mov rTemp3, rTemp2
 
 NewAppelY:
-mov rAppelY, rTemp
 ldi rTemp, 4
+mov rAppelY, rTemp
+// Load Y Coord
 ldi YL, LOW(matrix)
 ldi YH, HIGH(matrix)
 ldi rTemp3, 0

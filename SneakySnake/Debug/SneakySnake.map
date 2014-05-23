@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Fri May 23 02:26:07 2014
+AVRASM ver. 2.1.52  C:\Users\Walle\Documents\GitHub\SneakySnake\SneakySnake\SneakySnake.asm Fri May 23 09:57:29 2014
 
 
 EQU  SIGNATURE_000 0000001e
@@ -694,6 +694,8 @@ EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
 DEF  rZero        r0
+DEF  rStaticTemp  r4
+DEF  rStaticTemp2 r5
 DEF  rRandomNumber r6
 DEF  rSnakeHead   r7
 DEF  rApplePosition r8
@@ -756,8 +758,8 @@ CSEG checkDown    00000189
 CSEG setUp        0000018e
 CSEG endInputY    0000018d
 CSEG setDown      00000191
-CSEG NewAppelLoopX 00000198
-CSEG AppeleCounterX 000001aa
-CSEG NewAppelY    0000019c
-CSEG NewAppelLoopY 000001a1
-CSEG AppeleCounterY 000001ae
+CSEG NewAppelLoopX 000001a1
+CSEG AppeleCounterX 000001b3
+CSEG NewAppelY    000001a5
+CSEG NewAppelLoopY 000001aa
+CSEG AppeleCounterY 000001b7
