@@ -3,9 +3,11 @@
  *
  *  Created: 2014-04-25 08:52:10
  *   Author: Rasmus Wallberg, Patrik Johansson, Johan Lautakoski
- */ 
+ */
 
 .DEF rZero			= r0
+.DEF rStaticTemp    = r4
+.DEF rStaticTemp2   = r5
 .DEF rRandomNumber  = r6
 .DEF rSnakeHead		= r7
 .DEF rApplePosition = r8
@@ -26,7 +28,7 @@
 
 .EQU NUM_COLUMNS   = 8
 
-.EQU MAX_LENGTH    = 25
+.EQU MAX_LENGTH    = 64
 .DSEG
 adress:		.BYTE 16
 matrix:   .BYTE 8
@@ -135,16 +137,17 @@ GameLoop:
 	jmp SnakeMove
 GameLoop1:
 	rcall SnakeToMatrixDisplay
-	rcall NewAppleX
+	rcall UpdateAppleX
 
 	//	rcall SnakeCollision
 
 	// Initiera Matrisen i Minnet
 
-	/*
+	
 	ldi	YH, HIGH(matrix)
 	ldi	YL, LOW(matrix)
 
+	/*
 	// Get input from X-axis
 	// Spara matrisens rad0
 	mov	rMatrixTemp, rDir
@@ -183,7 +186,7 @@ reset:
 	ldi	YL, LOW(matrix)
 	ldi	rTemp2, 0b00000001
 	ldi	rTemp, 0b00000000
-	ldi rTemp3, 12
+	ldi rTemp3, 16
 	cp rTimerCount, rTemp3
 	brsh GameLoop
 	jmp DrawRow
@@ -218,8 +221,8 @@ DrawRow:
 	ld	rMatrixTemp, Y
 	
 	// Invert the bits of Matrix row
-	mov rArg, rMatrixTemp
-	call invertBits
+	// mov rArg, rMatrixTemp
+	// call invertBits
 	mov rMatrixTemp, rArg
 
 	lsr	rMatrixTemp
@@ -446,7 +449,7 @@ brne DontAddBody
 	ldi rTemp, 1		
 	add rSL, rTemp		// Add SnakeBody with 1
 	st Y+, rTemp2		// Store the last bodypart with the last position
-
+	rcall NewAppleX
 
 
 DontAddBody:
@@ -529,9 +532,8 @@ timerCount:
 	subi rInterruptTemp, -3
 	cpi rInterruptTemp, 65
 	brsh dontResetRandom
-	mov rInterruptTemp, rZero
-dontResetRandom:
 	subi rInterruptTemp, 65
+dontResetRandom:
 	mov rRandomNumber, rInterruptTemp
 	mov rInterruptTemp, rTimerCount
 	subi rInterruptTemp, -1
@@ -656,18 +658,63 @@ setDown:
 	mov rDir, rTemp
 ret
 
+UpdateAppleX:
+// Load X Coord
+ldi rTemp3, 0
+ldi rTemp2, 0b10000000
+UpdateAppelLoopX:
+cp rTemp3,rAppelX
+brlo AppeleCounterX
+
+UpdateAppelY:
+// Load Y Coord
+ldi YL, LOW(matrix)
+ldi YH, HIGH(matrix)
+ldi rTemp3, 0
+UpdateAppelLoopY:
+cp rTemp3,rAppelY
+brlo AppeleCounterY
+ld rTemp, Y
+or rTemp2, rTemp
+st Y, rTemp2
+ret
+UpdateAppeleCounterX:
+lsr rTemp2
+subi rTemp3, -1
+jmp UpdateAppelLoopX
+
+UpdateAppeleCounterY:
+ld rTemp, Y+
+subi rTemp3, -1
+jmp UpdateAppelLoopY
+
+
 NewAppleX:
-ldi rTemp, 4
+// Split Random Number To X and Y Coords
+// rTemp2 Is X Coordinate
+ldi rTemp, 0b00000111
+and rTemp, rRandomNumber
+mov rStaticTemp, rTemp
+// rTemp3 is Y Coordinate
+ldi rTemp, 0b00111000
+and rTemp, rRandomNumber
+mov rStaticTemp2, rTemp
+lsr rStaticTemp2
+lsr rStaticTemp2
+lsr rStaticTemp2
+
+// Load X Coord
+mov rTemp, rStaticTemp
 mov rAppelX, rTemp
 ldi rTemp3, 0
-ldi rTemp2, 0b00000001
+ldi rTemp2, 0b10000000
 NewAppelLoopX:
 cp rTemp3,rAppelX
 brlo AppeleCounterX
-lsl rTemp2
 
 NewAppelY:
-ldi rTemp, 4
+// Load Y Coord
+mov rTemp, rStaticTemp2
 mov rAppelY, rTemp
 ldi YL, LOW(matrix)
 ldi YH, HIGH(matrix)
@@ -684,7 +731,7 @@ or rTemp3, rTemp
 st Y, rTemp3
 ret
 AppeleCounterX:
-lsl rTemp2
+lsr rTemp2
 subi rTemp3, -1
 jmp NewAppelLoopX
 
